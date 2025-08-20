@@ -1,0 +1,9 @@
+.page {
+  padding: 12px;
+}
+.card {
+  background: #fff3d0;
+  border: 1px solid #d6a572;
+  border-radius: 12px;
+  padding: 16px;
+}
