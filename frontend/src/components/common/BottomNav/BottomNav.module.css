@@ -1,6 +1,6 @@
 .nav {
-  position: fixed;
-  left: 0;
+  position: absolute; /* ✅ fixed → absolute */
+  left: 0; /* 컨테이너의 왼/오/아래에 딱 붙이기 */
   right: 0;
   bottom: 0;
   height: 56px;
