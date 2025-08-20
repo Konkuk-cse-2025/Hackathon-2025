@@ -1,0 +1,11 @@
+.page {
+  position: relative;
+  min-height: 100dvh;
+  padding-bottom: 56px;
+}
+.mapPlaceholder {
+  height: calc(100dvh - 48px - 56px);
+  display: grid;
+  place-items: center;
+  color: #a86a3a;
+}

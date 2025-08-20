@@ -1,0 +1,18 @@
+.nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background: #6a3a18;
+  color: #ffdca8;
+  align-items: center;
+  text-align: center;
+}
+.active {
+  font-weight: 700;
+  color: #fff3d0;
+  text-decoration: underline;
+}

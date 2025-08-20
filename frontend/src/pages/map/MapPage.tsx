@@ -1,0 +1,20 @@
+import { useEffect, useState } from "react";
+import Header from "@/components/common/Header/Header";
+import BottomNav from "@/components/common/BottomNav/BottomNav";
+import styles from "./MapPage.module.css";
+
+export default function MapPage() {
+  const [selected, setSelected] = useState<number | null>(null);
+
+  useEffect(() => {
+    // TODO: 여기서 Kakao Map 붙이기 (loadKakaoMap + Marker 배치)
+  }, []);
+
+  return (
+    <div className={styles.page}>
+      <Header title="지도" />
+      <div className={styles.mapPlaceholder}>지도 자리 (KakaoMap)</div>
+      <BottomNav />
+    </div>
+  );
+}
