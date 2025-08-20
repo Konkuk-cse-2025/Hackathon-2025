@@ -4,13 +4,22 @@
   right: 0;
   bottom: 0;
   height: 56px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  justify-content: space-around; /* 아이템 간격 균등 분배 */
   background: #6a3a18;
   color: #ffdca8;
   align-items: center;
   text-align: center;
 }
+
+.nav a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: inherit;
+}
+
 .active {
   font-weight: 700;
   color: #fff3d0;

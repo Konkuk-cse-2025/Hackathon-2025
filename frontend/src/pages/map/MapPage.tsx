@@ -15,7 +15,9 @@ export default function MapPage() {
     <div className={styles.page}>
       <Header title="지도" />
       <div className={styles.mapPlaceholder}>지도 자리 (KakaoMap)</div>
-      <Button onClick={() => alert("편지함 만들기!")}>편지함 만들기</Button>
+      <div className={styles.cta}>
+        <Button onClick={() => alert("편지함 만들기!")}>편지함 만들기</Button>
+      </div>
       <BottomNav />
     </div>
   );
