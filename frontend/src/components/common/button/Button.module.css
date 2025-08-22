@@ -1,0 +1,20 @@
+.button {
+  background: #8b4b23; /* 브라운 색 */
+  color: #fffdf7; /* 흰빛 글씨 */
+  font-weight: 600;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s;
+}
+
+.button:hover {
+  background: #6a3a18; /* hover 시 진한 브라운 */
+}
+
+.full {
+  display: block;
+  width: 100%;
+}

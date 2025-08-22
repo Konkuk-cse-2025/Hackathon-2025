@@ -11,12 +11,6 @@ export default function BottomNav() {
         지도
       </NavLink>
       <NavLink
-        to="/write"
-        className={({ isActive }) => (isActive ? styles.active : "")}
-      >
-        편지쓰기
-      </NavLink>
-      <NavLink
         to="/mypage"
         className={({ isActive }) => (isActive ? styles.active : "")}
       >

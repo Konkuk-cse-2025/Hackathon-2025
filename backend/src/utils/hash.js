@@ -1,3 +1,4 @@
+
 // src/utils/hash.js
 const bcrypt = require('bcryptjs'); // npm i bcryptjs
 
@@ -12,3 +13,4 @@ async function compare(plain, hashed) {
 }
 
 module.exports = { hash, compare }; // ✅ CommonJS로 내보내기
+

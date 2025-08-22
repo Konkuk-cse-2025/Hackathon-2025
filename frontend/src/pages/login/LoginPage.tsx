@@ -31,7 +31,9 @@ export default function LoginPage() {
         />
         <button type="submit">로그인</button>
       </form>
+
       <BottomNav />
+
     </div>
   );
 }

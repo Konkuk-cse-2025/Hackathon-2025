@@ -1,3 +1,4 @@
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -65,4 +66,31 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+html,
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center; /* 수평 가운데 */
+  align-items: center; /* 수직 가운데 */
+  height: 100vh; /* 브라우저 높이에 맞추기 */
+  background: #222; /* 프레임 바깥 배경 */
+}
+
+#root {
+  width: 400px;
+  height: 800px;
+  background: #fff7ea;
+  overflow: hidden;
+
 }

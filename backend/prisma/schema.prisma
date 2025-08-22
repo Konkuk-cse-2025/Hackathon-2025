@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum MailboxType {
+  OPEN
+  SECRET
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  letters   Letter[]
+}
+
+model Mailbox {
+  id           Int         @id @default(autoincrement())
+  name         String
+  type         MailboxType
+  passwordHash String?
+  hint         String?
+  lat          Float
+  lng          Float
+  createdAt    DateTime    @default(now())
+  letters      Letter[]
+
+  @@index([lat, lng])
+}
+
+model Letter {
+  id        Int      @id @default(autoincrement())
+  mailboxId Int
+  authorId  Int?
+  title     String
+  content   String
+  createdAt DateTime @default(now())
+
+  mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  author  User?   @relation(fields: [authorId], references: [id])
+
+  @@index([mailboxId, createdAt])
+}
