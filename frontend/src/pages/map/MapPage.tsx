@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import Header from "@/components/common/Header/Header";
 import Button from "@/components/common/button/Button";
+import NaverMap from "@/components/MapPage/NaverMap";
 import styles from "./MapPage.module.css";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
-import NaverMap from "@/components/MapPage/NaverMap";
 
 export default function MapPage() {
   const [selected, setSelected] = useState<number | null>(null);

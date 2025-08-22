@@ -6,6 +6,7 @@
   display: flex;
   flex-direction: column;
   padding-bottom: 56px;
+  background-color: #FAF0D7;
 }
 
 .mapPlaceholder {
