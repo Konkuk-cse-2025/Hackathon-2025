@@ -1,0 +1,32 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #8b4b23; /* 갈색 */
+}
+
+.input {
+  padding: 12px 14px;
+  border: 2px solid #f1c866; /* 노란색 테두리 */
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fffdf7;
+  color: #2c180c;
+}
+
+.input::placeholder {
+  color: #cda06d;
+}
+
+.input:focus {
+  border-color: #d89a29; /* 포커스 시 진한 노란색 */
+  box-shadow: 0 0 0 2px rgba(216, 154, 41, 0.2);
+}

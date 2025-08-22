@@ -1,7 +1,8 @@
 .app {
-  min-height: 100dvh;
+  position: relative; /* ✅ 기준 컨테이너 */
+  width: 400px;
+  height: 800px;
+  margin: 0 auto;
   background: #fff7ea;
-  color: #2c180c;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, "Apple SD Gothic Neo",
-    "Noto Sans KR", sans-serif;
+  overflow: hidden;
 }
