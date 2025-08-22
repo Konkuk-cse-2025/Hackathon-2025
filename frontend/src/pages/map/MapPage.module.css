@@ -9,10 +9,8 @@
 }
 
 .mapPlaceholder {
-  flex: 1; /* ← 남는 공간을 지도 영역이 가져가게 */
-  display: grid;
-  place-items: center;
-  color: #a86a3a;
+  width: 400px;
+  height: 100%;
 }
 
 .cta {
