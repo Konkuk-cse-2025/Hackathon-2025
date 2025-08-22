@@ -1,14 +1,13 @@
-const jwt = require('jsonwebtoken');
-const SECRET = process.env.JWT_SECRET;
+// src/utils/jwt.js
+const jwt = require('jsonwebtoken');           // npm i jsonwebtoken
+const SECRET = process.env.JWT_SECRET || 'dev-secret';
 
-function sign(payload, opt={}) {
-  return new Promise((resolve, reject) =>
-    jwt.sign(payload, SECRET, { expiresIn: '10m', ...opt }, (e, t) => e ? reject(e) : resolve(t))
-  );
+function sign(payload) {
+  return jwt.sign(payload, SECRET, { expiresIn: '7d' });
 }
+
 function verify(token) {
-  return new Promise((resolve, reject) =>
-    jwt.verify(token, SECRET, (e, p) => e ? reject(e) : resolve(p))
-  );
+  return jwt.verify(token, SECRET);
 }
-module.exports = { sign, verify };
+
+module.exports = { sign, verify };             // ✅ CJS export

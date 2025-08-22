@@ -1,12 +1,7 @@
+// src/app.js  (임시 최소 버전)
 const express = require('express');
-const cors = require('cors');
-const routes = require('./routes');
-const { errorHandler } = require('./middlewares/errorHandler');
-
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(routes);
-app.use(errorHandler);
 
-module.exports = app;
+app.get('/', (_req, res) => res.send('OK'));
+
+module.exports = app;   // ⚠️ 반드시 이 형태 (module.exports = app)
