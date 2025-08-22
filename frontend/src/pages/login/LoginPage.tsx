@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./LoginPage.module.css";
+import BottomNav from "@/components/common/BottomNav/BottomNav";
 import { useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
@@ -30,6 +31,9 @@ export default function LoginPage() {
         />
         <button type="submit">로그인</button>
       </form>
+
+      <BottomNav />
+
     </div>
   );
 }

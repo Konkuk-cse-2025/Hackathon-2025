@@ -1,4 +1,3 @@
-
 // src/utils/jwt.js
 const jwt = require('jsonwebtoken');           // npm i jsonwebtoken
 const SECRET = process.env.JWT_SECRET || 'dev-secret';
@@ -12,4 +11,3 @@ function verify(token) {
 }
 
 module.exports = { sign, verify };             // ✅ CJS export
-

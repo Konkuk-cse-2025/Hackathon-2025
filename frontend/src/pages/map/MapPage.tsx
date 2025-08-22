@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import Header from "@/components/common/Header/Header";
+import BottomNav from "@/components/common/BottomNav/BottomNav";
+import styles from "./MapPage.module.css";
 import Button from "@/components/common/button/Button";
 import styles from "./MapPage.module.css";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
+
 
 export default function MapPage() {
   const [selected, setSelected] = useState<number | null>(null);
@@ -15,9 +18,11 @@ export default function MapPage() {
     <div className={styles.page}>
       <Header title="지도" />
       <div className={styles.mapPlaceholder}>지도 자리 (KakaoMap)</div>
+
       <div className={styles.cta}>
         <Button onClick={() => alert("편지함 만들기!")}>편지함 만들기</Button>
       </div>
+
       <BottomNav />
     </div>
   );

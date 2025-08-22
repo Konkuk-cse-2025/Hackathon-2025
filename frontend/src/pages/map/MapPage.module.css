@@ -1,4 +1,4 @@
-/* src/pages/map/MapPage.module.css */
+
 .page {
   position: relative;
   width: 100%;
@@ -15,8 +15,10 @@
   color: #a86a3a;
 }
 
+
 .cta {
   margin-left: 16px;
   margin-right: 16px;
   margin-bottom: 15px;
 }
+

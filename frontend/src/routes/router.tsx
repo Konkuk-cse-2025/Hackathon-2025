@@ -7,6 +7,7 @@ import LetterPage from "@/pages/letter/LetterPage";
 import MyPage from "@/pages/mypage/MyPage";
 //import WriteBoxPage from "@/pages/write/WriteBoxPage";
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: "letter/:id", element: <LetterPage /> },
       { path: "mypage", element: <MyPage /> },
       //{ path: "box/new", element: <WriteBoxPage /> },
+
     ],
   },
 ]);
