@@ -1,20 +1,29 @@
+/* 기존 .button 정의에 다음 5줄이 들어있어야 가운데 정렬이 정확 */
 .button {
-  background: #8b4b23; /* 브라운 색 */
-  color: #fffdf7; /* 흰빛 글씨 */
-  font-weight: 600;
-  padding: 14px 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1;
 }
 
-.button:hover {
-  background: #6a3a18; /* hover 시 진한 브라운 */
+/* 아이콘 래퍼 + 내부 img/svg 크기 */
+.icon {
+  display: inline-flex;
+  align-items: center;
+}
+.icon > img,
+.icon > svg {
+  width: 5em; 
+  height: 5em;
+  object-fit: contain;
 }
 
-.full {
-  display: block;
-  width: 100%;
+/* 텍스트 줄간격 보정 */
+.label {
+  line-height: 1;
+}
+.actionsRight {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽으로 밀기 */
 }

@@ -1,15 +1,63 @@
+:root {
+  --bg: #FAF0D7;          /* 연한 베이지 */
+  --surface: #FAF0D7;     /* 카드 배경 */
+  --brown: #5C3A1E;       /* 선/텍스트 */
+  --header-bg: #6B4226;   /* 헤더 갈색 박스 */
+  --header-text: #F5E6C8; /* 헤더 글자(연한 베이지) */
+}
+
 .page {
-  padding: 12px 12px 68px;
+  width: 100%;
+  min-height: 100dvh;
+  background: var(--bg);
+  margin: 0;
+  padding: 0;
+  font-family: "Poor Story", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
-.list {
-  display: grid;
-  gap: 8px;
-}
-.item {
+
+/* 상단 갈색 박스: 가운데 정렬 + 텍스트 옆 아이콘 */
+.header {
+  background: var(--header-bg);
+  color: var(--header-text);
   display: flex;
-  justify-content: space-between;
-  padding: 12px;
-  background: #fffdf7;
-  border: 1px solid #e3bf92;
-  border-radius: 10px;
+  align-items: center;
+  justify-content: center; /* 텍스트+이미지 묶음을 수평 중앙 */
+  gap: 10px;               /* 텍스트와 이미지 간격 */
+  
+}
+
+
+/* jpg를 이모지처럼 보이게 */
+.headerEmoji {
+  width: 2em;        /* 폰트 크기에 비례해 함께 커짐 */
+  height: 2em;
+  object-fit: cover;   /* 정사각형 크롭 */
+  border-radius: 4px;  /* 살짝 둥글게(사진 느낌) */
+  vertical-align: middle;
+  display: inline-block;
+  /* 필요하면 살짝 내려 맞춤: transform: translateY(1px); */
+}
+
+.main {
+  display: grid;
+  gap: 16px;
+  padding: 20px 16px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.card {
+  background: var(--surface);
+  border: 2px solid var(--brown);
+  border-radius: 6px;
+  padding: 14px 16px;
+}
+
+.cardTitle {
+  margin: 0 0 12px;
+  font-size: 18px;
+  color: var(--brown);
+  border-bottom: 1px solid var(--brown);
+  padding-bottom: 6px;
+  font-weight: 400;
 }

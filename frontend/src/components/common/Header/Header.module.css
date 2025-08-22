@@ -1,11 +1,24 @@
+:root {
+  --bg: #FAF0D7;          /* 연한 베이지 */
+  --surface: #FAF0D7;     /* 카드 배경 */
+  --brown: #5C3A1E;       /* 선/텍스트 */
+  --header-bg: #6B4226;   /* 헤더 갈색 박스 */
+  --header-text: #F5E6C8; /* 헤더 글자(연한 베이지) */
+}
+
 .header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  height: 48px;
+  background: var(--header-bg);
+  color: var(--header-text);
   display: flex;
   align-items: center;
-  padding: 0 16px;
-  background: #8b4b23;
-  color: #ffe9c7;
+  justify-content: center; /* 텍스트+이미지 묶음을 수평 중앙 */
+  gap: 10px;               /* 텍스트와 이미지 간격 */
+  padding: 18px 12px;
 }
+.headerText{
+  font-size: 28px;     /* 요청: 글자 약간 크게 */
+  line-height: 1.2;
+  letter-spacing: 2px; /* 이미지 느낌 살짝 벌림 */
+  font-weight: 400;    /* Poor Story는 400 권장 */
+}
+
