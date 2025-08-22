@@ -3,8 +3,6 @@ import Header from "@/components/common/Header/Header";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
 import styles from "./MapPage.module.css";
 import Button from "@/components/common/button/Button";
-import styles from "./MapPage.module.css";
-import BottomNav from "@/components/common/BottomNav/BottomNav";
 import NaverMap from "@/components/MapPage/NaverMap";
 
 
