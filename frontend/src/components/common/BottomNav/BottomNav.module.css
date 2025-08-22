@@ -6,18 +6,11 @@
   height: 56px;
   display: flex;
   justify-content: space-around; /* 아이템 간격 균등 분배 */
+
   background: #6a3a18;
   color: #ffdca8;
   align-items: center;
   text-align: center;
-}
-
-.nav a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  color: inherit;
 }
 
 .active {
