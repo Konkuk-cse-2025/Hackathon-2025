@@ -31,16 +31,17 @@ async function createMailbox({ name, type, lat, lng, password, hint }) {
 }
 
 async function listNearby({ lat, lng, radius = 1 }) {
-  const center = { lat: Number(lat), lng: Number(lng) };
-  const bounds = makeBoundingBox(center.lat, center.lng, Number(radius));
+  
   const candidates = await mailboxRepo.findInBounds(bounds);
-
+  const center = { lat: Number(lat), lng: Number(lng) };
+  const radiusMeters = Number(radius) || 1000;
+  const bounds = makeBoundingBox(center.lat, center.lng, radiusMeters / 1000);
   return candidates
     .map((m) => ({
       ...m,
       distanceMeters: haversineDistanceMeters(center.lat, center.lng, m.lat, m.lng),
     }))
-    .filter((m) => m.distanceMeters <= radius * 1000)
+    .filter((m) => m.distanceMeters <= radiusMeters)
     .sort((a, b) => a.distanceMeters - b.distanceMeters);
 }
 
@@ -72,8 +73,32 @@ async function requireAccessSimple({ mailboxId, userLat, userLng, password }) {
   return mb;
 }
 
+// 요청: { mailboxId, userLat, userLng, password }
+// 응답: { ok: true, access: true, distanceMeters }
+async function gate({ mailboxId, userLat, userLng, password }) {
+  // 내부적으로 requireAccessSimple을 그대로 재사용 (검증 실패 시 에러 throw)
+  const mb = await requireAccessSimple({
+    mailboxId,
+    userLat,
+    userLng,
+    password,
+  });
+
+  // 거리는 프론트 UX에서 쓰기 좋아서 같이 내려주면 편함
+  const distanceMeters = haversineDistanceMeters(
+    Number(userLat),
+    Number(userLng),
+    mb.lat,
+    mb.lng
+  );
+
+  return { ok: true, access: true, distanceMeters };
+}
+
+
 module.exports = {
   createMailbox,
   listNearby,
-  requireAccessSimple, // ✅ 이거 export
+  requireAccessSimple,
+  gate,
 };
