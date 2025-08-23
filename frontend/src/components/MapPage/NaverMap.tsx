@@ -2,7 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import LetterboxMarker from "./markers/LetterboxMarker";
 import type { Letterbox } from "./types";
 
-type NMap = any;
+type Props = {
+  letterboxes: Letterbox[];
+  selectedId?: string | null;
+  onSelect?: (id: string) => void;
+};
 
 function waitForNaverMaps(): Promise<any> {
   return new Promise((resolve) => {
@@ -19,10 +23,10 @@ function waitForNaverMaps(): Promise<any> {
   });
 }
 
-const NaverMap: React.FC = () => {
+const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
   const mapDivRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<NMap | null>(null);
-  const meMarkerRef = useRef<NMap | null>(null);
+  const mapRef = useRef<any>(null);
+  const meMarkerRef = useRef<any>(null);
   const watchIdRef = useRef<number | null>(null);
 
   const lastPosRef = useRef<{ lat: number; lng: number; t: number } | null>(
@@ -175,6 +179,17 @@ const NaverMap: React.FC = () => {
         ref={mapDivRef}
         style={{ width: "100%", height: "100%", zIndex: 0 }}
       />
+      {mapRef.current &&
+        letterboxes.map((b) => (
+          <LetterboxMarker
+            key={b.id}
+            map={mapRef.current}
+            position={{ lat: b.lat, lng: b.lng }}
+            variant={b.isSecret ? "secret" : "public"} // 비밀/공개에 따라 디자인 분기
+            selected={selectedId === b.id}
+            onClick={() => onSelect?.(b.id)}
+          />
+        ))}
     </div>
   );
 };
