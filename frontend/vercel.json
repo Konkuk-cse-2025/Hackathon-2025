@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://<백엔드-도메인>/api/$1" },
+    { "source": "/((?!assets|.*\\..*).*)", "destination": "/index.html" }
+  ]
+}
