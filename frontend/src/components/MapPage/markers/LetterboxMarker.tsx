@@ -3,7 +3,7 @@ import type { LatLng } from "../types";
 
 type Props = {
   map: any; // naver.maps.Map
-  position: LatLng;
+  position: { lat: number; lng: number };
   variant: "public" | "secret";
   selected?: boolean;
   onClick?: () => void;

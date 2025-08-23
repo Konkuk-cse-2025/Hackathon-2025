@@ -1,0 +1,55 @@
+.popupCard {
+  padding: 16px;
+  border-radius: 16px;
+}
+.secret {
+  background: #f7f5f2;
+} /* 비밀 팝업 톤 분리 */
+
+.header {
+  margin-bottom: 12px;
+  text-align: center;
+}
+.title {
+  font-weight: 700;
+}
+.sub {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.actionsRow {
+  display: grid;
+  gap: 8px;
+}
+.inlineRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: end;
+}
+.inlineBtn {
+  min-width: 72px;
+}
+
+.statusIdle {
+  min-height: 18px;
+}
+.statusOk {
+  color: #2e7d32;
+  font-size: 12px;
+}
+.statusErr {
+  color: #d32f2f;
+  font-size: 12px;
+}
+.inputError {
+  outline: 2px solid #d32f2f;
+}
+.ghost {
+  background: transparent;
+  border: 1px solid currentColor;
+}
+.lock {
+  margin-right: 6px;
+}
