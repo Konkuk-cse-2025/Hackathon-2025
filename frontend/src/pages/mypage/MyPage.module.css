@@ -33,6 +33,7 @@
   font-weight: 400;    /* Poor Story는 400 권장 */
 }
 
+
 /* jpg를 이모지처럼 보이게 */
 .headerEmoji {
   width: 2em;        /* 폰트 크기에 비례해 함께 커짐 */

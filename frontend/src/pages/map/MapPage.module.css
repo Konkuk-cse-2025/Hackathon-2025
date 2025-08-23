@@ -21,3 +21,7 @@
   margin-bottom: 15px;
 }
 
+.actionsRight {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽으로 밀기 */
+}
