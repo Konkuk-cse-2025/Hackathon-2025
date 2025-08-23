@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
+
 import Header from "@/components/common/Header/Header";
 import Button from "@/components/common/button/Button";
 import NaverMap from "@/components/MapPage/NaverMap";
@@ -23,9 +25,21 @@ export default function MapPage() {
             편지함 만들기
           </Button>
         </div>
-      </div>
+        <div className={styles.cta}>
+          <div className={styles.actionsRight}>
+            <NavLink to="/letterbox">
+              <Button
+                fullWidth={false}
+                rightIcon={
+                  <img src="/icons/letterbox.png" alt="" aria-hidden="true" />
+                }
+              ></Button>
+            </NavLink>
+          </div>
+        </div>
 
-      <BottomNav />
+        <BottomNav />
+      </div>
     </div>
   );
 }

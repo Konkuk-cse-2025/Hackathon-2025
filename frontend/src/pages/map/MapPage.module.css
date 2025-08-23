@@ -18,3 +18,8 @@
   z-index: 1000; /* 지도보다 확 높게 */
   pointer-events: auto;
 }
+
+.actionsRight {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽으로 밀기 */
+}
