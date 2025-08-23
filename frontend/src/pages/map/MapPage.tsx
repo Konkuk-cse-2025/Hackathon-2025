@@ -63,6 +63,7 @@ export default function MapPage() {
                   setSelected(null);
                   navigate(`/boxes/${selectedBox.id}`);
                 }}
+                onClose={() => setSelected(null)}
               />
             ) : (
               <PublicBox
@@ -72,6 +73,7 @@ export default function MapPage() {
                   setSelected(null);
                   navigate(`/boxes/${selectedBox.id}`);
                 }}
+                onClose={() => setSelected(null)}
               />
             )}
           </Backdrop>

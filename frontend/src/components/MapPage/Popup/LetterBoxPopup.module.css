@@ -1,20 +1,49 @@
 .popupCard {
+  width: min(92vw, 360px);
   padding: 16px;
   border-radius: 16px;
+  background: #fff7ee; /* 프로젝트 톤에 맞게 */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 .secret {
-  background: #f7f5f2;
-} /* 비밀 팝업 톤 분리 */
+  /* 비밀 팝업 톤 분리 */
+}
 
 .header {
+  position: relative;
   margin-bottom: 12px;
   text-align: center;
 }
+
+.close {
+  position: absolute;
+  right: -20px;
+  bottom: 18px;
+  border: none;
+  background: transparent;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.close:focus:not(:focus-visible) {
+  outline: none;
+}
+
 .title {
-  font-weight: 700;
+  font-size: 20px;
+  display: inline-flex; /* 한 줄 */
+  align-items: center; /* 수직 가운데 */
+  justify-content: center; /* 가로 가운데 */
+  gap: 4px;
+  margin: 0 auto; /* 가운데 배치 */
+  max-width: 100%;
+}
+
+.lock {
+  width: 25px;
+  height: 25px;
 }
 .sub {
-  font-size: 12px;
+  font-size: 16px;
   opacity: 0.7;
 }
 
@@ -23,13 +52,20 @@
   gap: 8px;
 }
 .inlineRow {
-  display: grid;
-  grid-template-columns: 1fr auto;
+  display: flex;
   gap: 8px;
-  align-items: end;
+  align-items: flex-end;
+}
+
+.inlineRow > :first-child {
+  flex: 1 1 auto;
 }
 .inlineBtn {
-  min-width: 72px;
+  flex: 0 0 auto;
+  align-self: flex-end; /* 혹시 상속 안 먹으면 강제 */
+  height: 44px; /* 인풋 높이와 맞추기(프로젝트 값으로) */
+  position: relative;
+  bottom: 17px;
 }
 
 .statusIdle {

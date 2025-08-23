@@ -9,6 +9,7 @@ type SecretBoxProps = {
   ownerName: string;
   onVerify: (password: string) => Promise<boolean> | boolean;
   onEnter: () => void; // 검증 성공 후 진입
+  onClose?: () => void;
 };
 
 export default function SecretBox({
@@ -16,6 +17,7 @@ export default function SecretBox({
   ownerName,
   onVerify,
   onEnter,
+  onClose,
 }: SecretBoxProps) {
   const [pw, setPw] = useState("");
   const [loading, setLoading] = useState(false);
@@ -47,10 +49,16 @@ export default function SecretBox({
     <Card className={`${styles.popupCard} ${styles.secret}`}>
       <div className={styles.header}>
         <div className={styles.title}>
-          <span className={styles.lock} aria-hidden>
-            🔒
-          </span>{" "}
+          <img src="icons/lock.svg" alt="자물쇠" className={styles.lock} />
           {boxName}
+          <button
+            type="button"
+            aria-label="닫기"
+            className={styles.close}
+            onClick={onClose}
+          >
+            <img src="icons/x.svg" alt="닫기" className={styles.closeIcon} />
+          </button>
         </div>
         <div className={styles.sub}>created by. {ownerName}</div>
       </div>
@@ -90,9 +98,9 @@ export default function SecretBox({
         {!ok && error && error}
       </div>
 
-      <Button onClick={handleVerify} disabled={loading}>
-        편지함 열기
-      </Button>
+      <div className={styles.actionsRow}>
+        <Button onClick={onEnter}>편지함 열기</Button>
+      </div>
     </Card>
   );
 }

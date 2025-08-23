@@ -2,6 +2,9 @@
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.35); /* ← 반투명 회색 */
+  display: grid;
+  place-items: center; /* ← 중앙정렬 */
+  z-index: 2000;
 }
 
 .center {
