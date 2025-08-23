@@ -8,7 +8,7 @@ const create = async (req,res,next)=>{ try{
   // 거리 + (SECRET이면) 비번 즉시 검증
   await mailboxSvc.requireAccessSimple({ mailboxId, userLat:lat, userLng:lng, password });
 
-  const authorId = req.user?.id || null; // 로그인 연동 원하면 optionalAuth 사용
+  const authorId = req.user?.userId || null; // 로그인 연동 원하면 optionalAuth 사용
   const r = await svc.create({ mailboxId, title, content, authorId });
   res.status(201).json(r);
 }catch(e){ next(e); }};
