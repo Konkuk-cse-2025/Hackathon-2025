@@ -1,4 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import LetterboxMarker from "./markers/LetterboxMarker";
+import type { Letterbox } from "./types";
+
 type NMap = any;
 
 function waitForNaverMaps(): Promise<any> {

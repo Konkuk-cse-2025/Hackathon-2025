@@ -6,13 +6,17 @@ export default function BottomNav() {
     <nav className={styles.nav}>
       <NavLink
         to="/map"
-        className={({ isActive }) => (isActive ? styles.active : "")}
+        className={({ isActive }) =>
+          isActive ? styles.active : styles.inactive
+        }
       >
         지도
       </NavLink>
       <NavLink
         to="/mypage"
-        className={({ isActive }) => (isActive ? styles.active : "")}
+        className={({ isActive }) =>
+          isActive ? styles.active : styles.inactive
+        }
       >
         마이
       </NavLink>
