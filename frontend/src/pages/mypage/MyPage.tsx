@@ -3,6 +3,8 @@ import styles from "./MyPage.module.css";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
 import Header from "@/components/common/Header/Header"
 
+
+
 export default function MyPage() {
   return (
     <div className={styles.page}>
@@ -16,6 +18,18 @@ export default function MyPage() {
         />
 
       </header>
+
+        <span className={styles.headerText}>나의 편지함</span>
+
+        <img
+          src="/icons/letterbox.png"
+          alt=""
+          className={styles.headerEmoji}
+          aria-hidden="true"
+        />
+
+      </header>
+
 
       <main className={styles.main}>
         <section className={styles.card}>

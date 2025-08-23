@@ -20,5 +20,8 @@
   line-height: 1.2;
   letter-spacing: 2px; /* 이미지 느낌 살짝 벌림 */
   font-weight: 400;    /* Poor Story는 400 권장 */
+  padding: 0 16px;
+  background: #6B4226;
+  color: #FAF0D7;
 }
 
