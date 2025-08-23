@@ -115,7 +115,10 @@ const NaverMap: React.FC = () => {
           내 위치로 이동
         </button>
       </div>
-      <div ref={mapDivRef} style={{ width: "100%", flex: 1 }} />
+      <div
+        ref={mapDivRef}
+        style={{ width: "100%", height: "100%", zIndex: 0 }}
+      />
     </div>
   );
 };
