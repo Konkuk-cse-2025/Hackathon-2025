@@ -88,7 +88,7 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
             };
           },
           (err) => console.warn("getCurrentPosition error:", err),
-          { enableHighAccuracy: true, timeout: 10000 }
+          { enableHighAccuracy: true, timeout: 30000 }
         );
 
         watchIdRef.current = navigator.geolocation.watchPosition(

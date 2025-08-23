@@ -70,7 +70,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #6b4226; /* 버튼 색상(갈색 톤) */
+  background-color: #8a6851; /* 버튼 색상(갈색 톤) */
   color: #faf0d7; /* 버튼 글자색 */
   cursor: pointer;
   transition: border-color 0.25s;

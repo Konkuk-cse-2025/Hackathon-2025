@@ -5,7 +5,7 @@
 
 .mapPlaceholder {
   position: relative;
-  height: calc(100vh - 56px - 64px); /* 헤더+바텀네브 높이에 맞게 조정 */
+  height: 730px; /* 헤더+바텀네브 높이에 맞게 조정 */
   overflow: hidden;
   z-index: 0;
 }
