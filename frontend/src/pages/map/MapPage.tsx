@@ -14,6 +14,7 @@ import Backdrop from "@/components/common/Backdrop/Backdrop";
 export type Letterbox = {
   id: string;
   name: string;
+  ownerName: string;
   lat: number;
   lng: number;
   isSecret: boolean; // true=비밀, false=공개
@@ -22,8 +23,22 @@ export type Letterbox = {
 export default function MapPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [boxes, setBoxes] = useState<Letterbox[]>([
-    { id: "1", name: "공개함 A", lat: 37.5669, lng: 126.9782, isSecret: false },
-    { id: "2", name: "비밀함 B", lat: 37.5655, lng: 126.9775, isSecret: true },
+    {
+      id: "1",
+      name: "공개함 A",
+      ownerName: "정언",
+      lat: 37.5669,
+      lng: 126.9782,
+      isSecret: false,
+    },
+    {
+      id: "2",
+      name: "비밀함 B",
+      ownerName: "정언",
+      lat: 37.5655,
+      lng: 126.9775,
+      isSecret: true,
+    },
   ]);
 
   const selectedBox = useMemo(
@@ -32,9 +47,23 @@ export default function MapPage() {
   );
 
   const navigate = useNavigate();
-
   useEffect(() => {
-    fetchLetterboxes().then(setBoxes).catch(console.error);
+    (async () => {
+      try {
+        const data = await fetchLetterboxes();
+        const mapped: Letterbox[] = data.map((it: any) => ({
+          id: it.id,
+          name: it.name,
+          ownerName: it.ownerName ?? it.owner?.name ?? "익명", // ✅ 보정
+          lat: it.lat,
+          lng: it.lng,
+          isSecret: it.isSecret,
+        }));
+        setBoxes(mapped);
+      } catch (e) {
+        console.error(e);
+      }
+    })();
   }, []);
 
   async function verifyPw(pw: string) {
@@ -57,7 +86,7 @@ export default function MapPage() {
             {selectedBox.isSecret ? (
               <SecretBox
                 boxName={selectedBox.name}
-                ownerName="(name)"
+                ownerName={selectedBox.ownerName}
                 onVerify={verifyPw}
                 onEnter={() => {
                   setSelected(null);
@@ -68,7 +97,7 @@ export default function MapPage() {
             ) : (
               <PublicBox
                 boxName={selectedBox.name}
-                ownerName="(name)"
+                ownerName={selectedBox.ownerName}
                 onEnter={() => {
                   setSelected(null);
                   navigate(`/boxes/${selectedBox.id}`);
