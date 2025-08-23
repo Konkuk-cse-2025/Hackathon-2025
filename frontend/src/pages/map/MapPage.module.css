@@ -1,24 +1,22 @@
-
 .page {
-  position: relative;
-  width: 100%;
-  height: 100%; /* ← 400x800 프레임 안에서 꽉 채우기 */
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 56px;
-  background-color: #FAF0D7;
+  position: relative; /* 오버레이 기준 잡기 */
+  min-height: 100vh;
 }
 
 .mapPlaceholder {
-  width: 400px;
-  height: 100%;
+  position: relative;
+  height: calc(100vh - 56px - 64px); /* 헤더+바텀네브 높이에 맞게 조정 */
+  overflow: hidden;
+  z-index: 0;
 }
 
-
 .cta {
-  margin-left: 16px;
-  margin-right: 16px;
-  margin-bottom: 15px;
+  position: absolute; /* 지도 위에 띄우기 */
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 96px; /* BottomNav 위로 띄우기 */
+  z-index: 1000; /* 지도보다 확 높게 */
+  pointer-events: auto;
 }
 
 .actionsRight {
