@@ -1,13 +1,15 @@
+// src/routes/auth.route.js
 const express = require('express');
+const ctrl = require('../controllers/auth.controller.js');
+const authGuard = require('../middlewares/authGuard.js');
+
 const router = express.Router();
 
-const authCtrl = require('../controllers/auth.controller');
-const authGuard = require('../middlewares/authGuard');
+// 회원가입 / 로그인
+router.post('/signup', ctrl.postSignup);
+router.post('/login', ctrl.postLogin);
 
-router.post('/signup', authCtrl.postSignup);
-router.post('/login', authCtrl.postLogin);
-
-// 보호 라우트
-router.get('/me', authGuard, authCtrl.me);
+// 내 정보
+router.get('/me', authGuard, ctrl.me);
 
 module.exports = router;

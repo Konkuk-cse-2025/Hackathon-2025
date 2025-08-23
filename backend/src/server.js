@@ -1,49 +1,49 @@
-
 // src/server.js
-require('dotenv').config();
+const path = require('path');
+if (!process.env.RAILWAY_ENVIRONMENT_NAME && process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+}
 
 const express = require('express');
 const cors = require('cors');
-// const mongoose = require('mongoose'); // 지금 안 쓰면 주석
+const mongoose = require('mongoose');
 
-const app = express();              // ✅ app을 먼저 만든 다음
-app.use(cors());                    // 공통 미들웨어
-app.use(express.json());            // ✅ 여기서 json 파서
+const app = express();
+app.set('trust proxy', 1);
 
-console.log('[server] mounting /auth');
-try {
-  const authRoutes = require('./routes/auth.route');
-  app.use('/auth', authRoutes);
-  console.log('[server] /auth mounted');
-} catch (e) {
-  console.warn('⚠️  /auth route not mounted:', e.message);
-  console.warn(e.stack);
-}
+// body
+app.use(express.json());
+
+// CORS
+const allowed = ['http://localhost:3000', process.env.FRONT_ORIGIN].filter(Boolean);
+app.use(cors({ origin: allowed, credentials: true })); // 필요하면 credentials:true
 
 // 헬스체크
-app.get('/', (_req, res) => res.send('OK'));
+app.get('/healthz', (_req, res) => res.status(200).json({ ok: true }));
 
-// 라우터 마운트
-try {
-  console.log('[server] mounting /auth');
-  const authRoutes = require('./routes/auth.route'); // CommonJS
-  app.use('/auth', authRoutes);
-  console.log('[server] /auth mounted');
-} catch (e) {
-  console.warn('⚠️  /auth route not mounted:', e.message);
+// 라우트
+app.use('/auth', require('./routes/auth.route.js'));
+
+// 공통 에러 핸들러 (라우트 뒤에, 한번만)
+const errorHandler = require('./middlewares/errorHandler.js');
+console.log('[debug] typeof errorHandler =', typeof errorHandler);
+console.log('[debug] resolved path =', require.resolve('./middlewares/errorHandler.js'));
+app.use(errorHandler);
+
+// DB 연결 후 리스닝
+const mongoUri = process.env.MONGODB_URI || process.env.DATABASE_URL;
+if (!mongoUri) {
+  console.error('[env] Missing MONGODB_URI');
+  process.exit(1);
 }
-
-// 에러 핸들러 (라우터 아래)
-app.use((err, req, res, next) => {
-  const status = err.status || 500;
-  if (process.env.NODE_ENV !== 'production') {
-    console.error('[error]', err);
+(async () => {
+  try {
+    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 30000 });
+    console.log('✅ MongoDB connected');
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => console.log(`🚀 Server on ${PORT}`));
+  } catch (e) {
+    console.error('❌ MongoDB connect error:', e.message);
+    process.exit(1);
   }
-  res.status(status).json({ message: err.message || 'Server error' });
-});
-
-const PORT = Number(process.env.PORT) || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
-
+})();

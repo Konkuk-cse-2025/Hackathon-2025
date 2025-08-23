@@ -1,39 +1,46 @@
 // src/repositories/user.repo.js
-// 임시 인메모리 저장소 (서버 재시작하면 초기화됨)
-const users = new Map(); // key: id (로그인 아이디), value: user obj
+const User = require('../models/User');
 
-async function isIdTaken(id) {
-  return users.has(id);
+/**
+ * 아이디(id)로 사용자 조회 (비밀번호 제외)
+ * - auth.service.signup에서 중복 체크 용도로 사용
+ * - 반환: Mongoose Document (id, name만 선택)
+ */
+async function findByIdField(id) {
+  return User.findOne({ id }).select('id name');
 }
 
-async function create({ id, name, passwordHash }) {
-  const userId = String(Date.now()); // 임시 PK
-  const doc = { userId, id, name, password: passwordHash };
-  users.set(id, doc);
-  return { userId, id, name }; // service가 기대하는 반환 형태
+/**
+ * 아이디(id)로 사용자 조회 (비밀번호 포함)
+ * - auth.service.login에서 비밀번호 검증을 위해 사용
+ * - 반환: Mongoose Document (verifyPassword 인스턴스 메서드 사용해야 하므로 lean() 쓰지 않음)
+ */
+async function findByIdWithPassword(id) {
+  return User.findOne({ id }).select('+password id name');
 }
 
-async function getById(id) {
-  const u = users.get(id);
-  return u ? { userId: u.userId, id: u.id, name: u.name } : null;
+/**
+ * 사용자 생성
+ * - 평문 password를 받아서 모델 메서드로 해시 저장
+ * - 반환: 저장된 Mongoose Document
+ */
+async function create({ id, name, password }) {
+  const user = new User({ id, name });
+  await user.setPassword(password); // 모델에 정의된 인스턴스 메서드
+  return user.save();
 }
 
-async function getByIdWithPassword(id) {
-  const u = users.get(id);
-  return u ? { ...u } : null; // password 포함
-}
-
-async function getByUserId(userId) {
-  for (const u of users.values()) {
-    if (u.userId === userId) return { userId: u.userId, id: u.id, name: u.name };
-  }
-  return null;
+/**
+ * (선택) userId(ObjectId)로 조회 – 필요 시 사용
+ * - 비밀번호 제외
+ */
+async function findByUserObjectId(userId) {
+  return User.findById(userId).select('id name');
 }
 
 module.exports = {
-  isIdTaken,
+  findByIdField,
+  findByIdWithPassword,
   create,
-  getById,
-  getByIdWithPassword,
-  getByUserId,
+  findByUserObjectId, // 선택 사용
 };
