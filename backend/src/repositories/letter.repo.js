@@ -1,9 +1,41 @@
-const prisma = require('../config/prisma');
+// src/repositories/letter.repo.js
+const prisma = require('../../prisma/client');
 
-const create = (data) => prisma.letter.create({ data });
-const findByMailbox = (mailboxId, take=50, skip=0) =>
-  prisma.letter.findMany({ where:{ mailboxId:Number(mailboxId) }, orderBy:{ createdAt:'desc' }, take, skip });
-const findByIdWithMailbox = (id) =>
-  prisma.letter.findUnique({ where:{ id:Number(id) }, include:{ mailbox:true }});
+async function create({ mailboxId, authorId, title, content }) {
+  return prisma.letter.create({
+    data: {
+      mailboxId: Number(mailboxId),
+      authorId: authorId != null ? Number(authorId) : null,
+      title,
+      content
+    },
+    select: { id: true, mailboxId: true, authorId: true, title: true, content: true, createdAt: true }
+  });
+}
+
+async function findByMailbox(mailboxId, limit, offset) {
+  return prisma.letter.findMany({
+    where: { mailboxId: Number(mailboxId) },
+    orderBy: { createdAt: 'desc' },
+    skip: Number(offset) || 0,
+    take: Number(limit) || 50,
+    select: { id: true, mailboxId: true, authorId: true, title: true, content: true, createdAt: true }
+  });
+}
+
+async function findByIdWithMailbox(id) {
+  return prisma.letter.findUnique({
+    where: { id: Number(id) },
+    select: {
+      id: true,
+      mailboxId: true,
+      authorId: true,
+      title: true,
+      content: true,
+      createdAt: true,
+      mailbox: { select: { id: true, type: true, lat: true, lng: true, passwordHash: true } }
+    }
+  });
+}
 
 module.exports = { create, findByMailbox, findByIdWithMailbox };

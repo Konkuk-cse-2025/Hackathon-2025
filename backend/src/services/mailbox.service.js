@@ -3,24 +3,20 @@ const { makeBoundingBox, haversineDistanceMeters, isWithinMeters } = require('..
 const { hash, compare } = require('../utils/hash');
 const mailboxRepo = require('../repositories/mailbox.repo');
 
-async function createMailbox({ name, type, lat, lng, password, hint }) {
+async function createMailbox({ ownerId, name, type, lat, lng, password, hint }) {
+  if (!ownerId) { const e = new Error('ownerId 필요'); e.status = 401; throw e; }
   if (!name || !type || lat == null || lng == null) {
-    const e = new Error('name, type, lat, lng 필요');
-    e.status = 400;
-    throw e;
+    const e = new Error('name, type, lat, lng 필요'); e.status = 400; throw e;
   }
 
   let passwordHash = null;
   if (type === 'SECRET') {
-    if (!password) {
-      const e = new Error('SECRET는 password 필요');
-      e.status = 400;
-      throw e;
-    }
+    if (!password) { const e = new Error('SECRET는 password 필요'); e.status = 400; throw e; }
     passwordHash = await hash(password);
   }
 
   return mailboxRepo.create({
+    ownerId: Number(ownerId),
     name,
     type,
     lat: Number(lat),
@@ -31,11 +27,13 @@ async function createMailbox({ name, type, lat, lng, password, hint }) {
 }
 
 async function listNearby({ lat, lng, radius = 1 }) {
-  
-  const candidates = await mailboxRepo.findInBounds(bounds);
   const center = { lat: Number(lat), lng: Number(lng) };
   const radiusMeters = Number(radius) || 1000;
+
+  // ✅ 순서 수정: bounds 계산 → 후보 조회
   const bounds = makeBoundingBox(center.lat, center.lng, radiusMeters / 1000);
+  const candidates = await mailboxRepo.findInBounds(bounds);
+
   return candidates
     .map((m) => ({
       ...m,
@@ -76,15 +74,8 @@ async function requireAccessSimple({ mailboxId, userLat, userLng, password }) {
 // 요청: { mailboxId, userLat, userLng, password }
 // 응답: { ok: true, access: true, distanceMeters }
 async function gate({ mailboxId, userLat, userLng, password }) {
-  // 내부적으로 requireAccessSimple을 그대로 재사용 (검증 실패 시 에러 throw)
-  const mb = await requireAccessSimple({
-    mailboxId,
-    userLat,
-    userLng,
-    password,
-  });
+  const mb = await requireAccessSimple({ mailboxId, userLat, userLng, password });
 
-  // 거리는 프론트 UX에서 쓰기 좋아서 같이 내려주면 편함
   const distanceMeters = haversineDistanceMeters(
     Number(userLat),
     Number(userLng),
@@ -94,7 +85,6 @@ async function gate({ mailboxId, userLat, userLng, password }) {
 
   return { ok: true, access: true, distanceMeters };
 }
-
 
 module.exports = {
   createMailbox,

@@ -19,6 +19,7 @@ model User {
   name      String
   createdAt DateTime @default(now())
   letters   Letter[]
+  mailboxes Mailbox[]
 }
 
 model Mailbox {
@@ -32,7 +33,11 @@ model Mailbox {
   createdAt    DateTime    @default(now())
   letters      Letter[]
 
+  ownerId      Int
+  owner        User        @relation(fields: [ownerId], references: [id])
+
   @@index([lat, lng])
+  @@index([ownerId, createdAt])
 }
 
 model Letter {

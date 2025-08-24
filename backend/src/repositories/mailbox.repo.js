@@ -1,8 +1,30 @@
-const prisma = require('../config/prisma');
+// src/repositories/mailbox.repo.js
+const prisma = require('../../prisma/client');
 
-const create = (data) => prisma.mailbox.create({ data });
-const findById = (id) => prisma.mailbox.findUnique({ where: { id: Number(id) } });
-const findInBounds = ({minLat,maxLat,minLng,maxLng}) =>
-  prisma.mailbox.findMany({ where: { lat:{gte:minLat,lte:maxLat}, lng:{gte:minLng,lte:maxLng} } });
+async function create({ ownerId, name, type, lat, lng, hint, passwordHash }) {
+  return prisma.mailbox.create({
+    data: { ownerId, name, type, lat, lng, hint, passwordHash },
+    select: { id: true, name: true, type: true, lat: true, lng: true, createdAt: true }
+  });
+}
 
-module.exports = { create, findById, findInBounds };
+// bounds: { minLat, maxLat, minLng, maxLng }
+async function findInBounds(bounds) {
+  return prisma.mailbox.findMany({
+    where: {
+      lat: { gte: bounds.minLat, lte: bounds.maxLat },
+      lng: { gte: bounds.minLng, lte: bounds.maxLng },
+    },
+    orderBy: { createdAt: 'desc' },
+    select: { id: true, name: true, type: true, lat: true, lng: true, createdAt: true }
+  });
+}
+
+async function findById(id) {
+  return prisma.mailbox.findUnique({
+    where: { id: Number(id) },
+    select: { id: true, name: true, type: true, lat: true, lng: true, passwordHash: true, createdAt: true }
+  });
+}
+
+module.exports = { create, findInBounds, findById };
