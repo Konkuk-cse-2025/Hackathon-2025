@@ -16,6 +16,7 @@ export default function LoginPage() {
     try {
       const { user, token } = await login({ id, password: pw });
       localStorage.setItem("token", token); // 토큰 저장
+      localStorage.setItem("user", JSON.stringify(user));
       console.log("로그인 성공:", user);
 
       nav("/map"); // 로그인 성공 시 지도 페이지로 이동

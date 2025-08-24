@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const api = axios.create({ baseURL: "" });
+export const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
 
 // 요청마다 토큰 자동 첨부
 api.interceptors.request.use((config) => {

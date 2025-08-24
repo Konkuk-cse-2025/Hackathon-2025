@@ -8,7 +8,7 @@ export async function fetchLetterboxes(params?: {
   radius?: number;
 }): Promise<Letterbox[]> {
   const q = new URLSearchParams(params as any).toString();
-  const res = await fetch(`${API_BASE}/api/letterboxes${q ? `?${q}` : ""}`);
+  const res = await fetch(`${API_BASE}/mailboxes${q ? `?${q}` : ""}`);
   if (!res.ok) throw new Error("목록 조회 실패");
   return res.json();
 }
@@ -21,7 +21,7 @@ export async function createLetterbox(body: {
   lat: number;
   lng: number;
 }): Promise<Letterbox> {
-  const res = await fetch(`${API_BASE}/api/letterboxes`, {
+  const res = await fetch(`${API_BASE}/mailboxes`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

@@ -1,12 +1,27 @@
+import { useState, useEffect } from "react";
 import styles from "./MyPage.module.css";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
 import Header from "@/components/common/Header/Header";
+import { AuthUser } from "@/apis/auth";
 
 export default function MyPage() {
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("user");
+    if (saved) {
+      try {
+        setUser(JSON.parse(saved));
+      } catch {
+        // 파싱 실패 시 안전하게 초기화
+        localStorage.removeItem("user");
+      }
+    }
+  }, []);
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <Header title="나의 편지함" />
+        <Header title={`${user ? user.name : "나"}의 편지함`} />
         <img
           src="/icons/letterbox.png"
           alt=""

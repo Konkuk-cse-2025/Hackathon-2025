@@ -16,7 +16,7 @@
   padding: 18px 12px;
 }
 .headerText {
-  font-size: 28px; /* 요청: 글자 약간 크게 */
+  font-size: 23px; /* 요청: 글자 약간 크게 */
   line-height: 1.2;
   letter-spacing: 2px; /* 이미지 느낌 살짝 벌림 */
   font-weight: 400; /* Poor Story는 400 권장 */
