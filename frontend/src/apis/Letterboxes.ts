@@ -1,27 +1,24 @@
-import type { Letterbox as UiLetterbox } from "@/components/MapPage/types";
+import { api } from "./apiClient";
+import type { ServerLetterbox, UiLetterbox } from "@/types/letterbox";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
-function mapServerToUi(it: any): UiLetterbox {
-  return {
-    id: String(it.id),
-    name: it.name,
-    lat: it.lat,
-    lng: it.lng,
-    isSecret: it.type === "SECRET",
-  };
-}
+const mapServerToUi = (it: ServerLetterbox): UiLetterbox => ({
+  id: String(it.id),
+  name: it.name,
+  ownerName: it.owner?.name ?? "익명",
+  lat: it.lat,
+  lng: it.lng,
+  isSecret: it.type === "SECRET",
+});
 
-export async function fetchLetterboxes(params?: {
-  lat?: number;
-  lng?: number;
-  radius?: number; // m
+export async function fetchLetterboxes(params: {
+  lat: number;
+  lng: number;
+  radius?: number;
 }): Promise<UiLetterbox[]> {
-  const q = new URLSearchParams(params as any).toString();
-  const res = await fetch(`${API_BASE}/mailboxes${q ? `?${q}` : ""}`);
-  if (!res.ok) throw new Error("목록 조회 실패");
-  const data = await res.json();
-  return Array.isArray(data) ? data.map(mapServerToUi) : [];
+  const { data } = await api.get<ServerLetterbox[]>("/mailboxes", { params });
+  return data.map(mapServerToUi);
 }
 
 export async function createLetterbox(body: {
@@ -31,7 +28,7 @@ export async function createLetterbox(body: {
   passwordHint?: string;
   lat: number;
   lng: number;
-}) {
+}): Promise<UiLetterbox> {
   const payload = {
     name: body.name,
     type: body.isSecret ? "SECRET" : "OPEN",
@@ -40,16 +37,6 @@ export async function createLetterbox(body: {
     password: body.isSecret ? body.password : undefined,
     passwordHint: body.isSecret ? body.passwordHint : undefined,
   };
-
-  const res = await fetch(`${API_BASE}/mailboxes`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) {
-    const text = await res.text().catch(() => "");
-    throw new Error(text || `생성 실패 (status ${res.status})`);
-  }
-  const created = await res.json();
-  return mapServerToUi(created);
+  const { data } = await api.post<ServerLetterbox>("/mailboxes", payload);
+  return mapServerToUi(data);
 }
