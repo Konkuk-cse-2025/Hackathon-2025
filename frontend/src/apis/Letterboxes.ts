@@ -1,16 +1,24 @@
-import type { Letterbox } from "@/components/MapPage/types";
+import { api } from "./apiClient";
+import type { ServerLetterbox, UiLetterbox } from "@/types/letterbox";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
-export async function fetchLetterboxes(params?: {
-  lat?: number;
-  lng?: number;
+const mapServerToUi = (it: ServerLetterbox): UiLetterbox => ({
+  id: String(it.id),
+  name: it.name,
+  ownerName: it.owner?.name ?? "익명",
+  lat: it.lat,
+  lng: it.lng,
+  isSecret: it.type === "SECRET",
+});
+
+export async function fetchLetterboxes(params: {
+  lat: number;
+  lng: number;
   radius?: number;
-}): Promise<Letterbox[]> {
-  const q = new URLSearchParams(params as any).toString();
-  const res = await fetch(`${API_BASE}/api/letterboxes${q ? `?${q}` : ""}`);
-  if (!res.ok) throw new Error("목록 조회 실패");
-  return res.json();
+}): Promise<UiLetterbox[]> {
+  const { data } = await api.get<ServerLetterbox[]>("/mailboxes", { params });
+  return data.map(mapServerToUi);
 }
 
 export async function createLetterbox(body: {
@@ -20,12 +28,15 @@ export async function createLetterbox(body: {
   passwordHint?: string;
   lat: number;
   lng: number;
-}): Promise<Letterbox> {
-  const res = await fetch(`${API_BASE}/api/letterboxes`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  if (!res.ok) throw new Error("생성 실패");
-  return res.json();
+}): Promise<UiLetterbox> {
+  const payload = {
+    name: body.name,
+    type: body.isSecret ? "SECRET" : "OPEN",
+    lat: body.lat,
+    lng: body.lng,
+    password: body.isSecret ? body.password : undefined,
+    passwordHint: body.isSecret ? body.passwordHint : undefined,
+  };
+  const { data } = await api.post<ServerLetterbox>("/mailboxes", payload);
+  return mapServerToUi(data);
 }

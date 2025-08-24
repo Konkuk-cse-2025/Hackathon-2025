@@ -11,9 +11,21 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "/auth": { target: "http://localhost:3000", changeOrigin: true },
-      "/mailboxes": { target: "http://localhost:3000", changeOrigin: true },
-      "/letters": { target: "http://localhost:3000", changeOrigin: true },
+      "/auth": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/mailboxes": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
+      "/letters": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 });

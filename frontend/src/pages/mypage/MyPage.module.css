@@ -1,7 +1,7 @@
 :root {
-  --bg: #faf0d7; /* 연한 베이지 */
-  --surface: #faf0d7; /* 카드 배경 */
-  --brown: #5c3a1e; /* 선/텍스트 */
+  --bg: #f6e7d8; /* 연한 베이지 */
+  --surface: #eec4c4; /* 카드 배경 */
+  --brown: #8a6851; /* 선/텍스트 */
   --header-bg: #8a6851; /* 헤더 갈색 박스 */
   --header-text: #f5e6c8; /* 헤더 글자(연한 베이지) */
 }
@@ -23,8 +23,8 @@
   display: flex;
   align-items: center;
   justify-content: center; /* 텍스트+이미지 묶음을 수평 중앙 */
-  gap: 10px; /* 텍스트와 이미지 간격 */
-  padding: 18px 12px;
+  gap: 5px; /* 텍스트와 이미지 간격 */
+  padding: 0px;
 }
 
 .headerText {
