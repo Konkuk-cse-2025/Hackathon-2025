@@ -1,26 +1,35 @@
-:root {
-  --bg: #faf0d7; /* 연한 베이지 */
-  --surface: #faf0d7; /* 카드 배경 */
-  --brown: #5c3a1e; /* 선/텍스트 */
-  --header-bg: #8a6851; /* 헤더 갈색 박스 */
-  --header-text: #f5e6c8; /* 헤더 글자(연한 베이지) */
-}
-
 .header {
-  background: var(--header-bg);
-  color: var(--header-text);
+  position: relative;           /* 절대배치 기준 */
+  height: 56px;                 /* 박스 높이 고정 */
+  background: #8a6851;          /* 갈색 박스 */
+  color: #FAF0D7;
   display: flex;
   align-items: center;
-  justify-content: center; /* 텍스트+이미지 묶음을 수평 중앙 */
-  gap: 10px; /* 텍스트와 이미지 간격 */
-  padding: 18px 12px;
-}
-.headerText {
-  font-size: 23px; /* 요청: 글자 약간 크게 */
-  line-height: 1.2;
-  letter-spacing: 2px; /* 이미지 느낌 살짝 벌림 */
-  font-weight: 400; /* Poor Story는 400 권장 */
+  justify-content: center;      /* 기본은 중앙 정렬(텍스트용) */
   padding: 0 16px;
-  background: #8a6851;
-  color: #faf0d7;
+  overflow: visible;            /* 큰 이미지가 튀어나와도 OK */
+}
+
+.headerText {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.headerImage {
+  position: absolute;           /* 레이아웃에 영향 X */
+  top: 50%;
+  transform: translateY(-50%);  /* 수직 중앙 정렬 */
+  pointer-events: none;
+}
+
+/* 이미지만 표시일 땐 수평 중앙 */
+.centerImage {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 텍스트+이미지일 땐 왼쪽 배치 */
+.leftImage {
+  left: 16px;
 }

@@ -4,6 +4,7 @@ import styles from "./Letterbox.module.css";
 import Button from "@/components/common/button/Button";
 import Toggle from "@/components/common/Toggle/ToggleSwitch";
 import { createLetterbox } from "@/apis/Letterboxes";
+import Header from "@/components/common/Header/Header";
 
 // 환경변수로 API 베이스 경로를 뺄 수 있어요. (Vite 기준)
 const API_BASE = import.meta.env.VITE_API_BASE_URL || ""; // 예: "https://api.example.com"
@@ -69,7 +70,9 @@ export default function CreateLetterboxPage() {
   };
 
   return (
+    <div> <Header mode="imageOnly" imageSrc="/icons/Logo_write.png" alt="편지함" imageWidth={80} />
     <div className={styles.page}>
+      
       <div className={styles.card}>
         {/* Header (타이포/색상은 별도 헤더 CSS) */}
         <div className={styles.header}>
@@ -152,7 +155,7 @@ export default function CreateLetterboxPage() {
 
         {/* 액션 버튼 */}
         <div className={styles.actions}>
-          <Button
+          <button
             type="button"
             className="btn btn-primary"
             style={{ width: "100%" }}
@@ -160,20 +163,22 @@ export default function CreateLetterboxPage() {
             disabled={submitting}
           >
             {submitting ? "만드는 중..." : "편지함 만들기"}
-          </Button>
+          </button>
 
           <NavLink to="/map" style={{ width: "100%" }}>
-            <Button
+            <button
               type="button"
               className="btn btn-secondary"
               style={{ width: "100%" }}
               disabled={submitting}
             >
               취소
-            </Button>
+            </button>
           </NavLink>
         </div>
+
       </div>
+    </div>
     </div>
   );
 }

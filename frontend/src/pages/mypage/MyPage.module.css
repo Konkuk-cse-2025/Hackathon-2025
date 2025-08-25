@@ -30,7 +30,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 92px;                 /* 상단 갈색 박스 높이 */
+  height: 56px;                 /* 상단 갈색 박스 높이 */
   box-shadow: var(--shadow-soft);
 }
 
