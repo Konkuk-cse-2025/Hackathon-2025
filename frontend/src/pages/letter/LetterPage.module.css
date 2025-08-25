@@ -1,9 +1,48 @@
 .page {
+  width: 400px;
+  height: 580px;
   padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
 }
 .card {
   background: #fff3d0;
   border: 1px solid #d6a572;
   border-radius: 12px;
   padding: 16px;
+}
+.title {
+  position: relative;
+  top: 10px;
+  left: 15px;
+  display: flex;
+  flex-direction: row;
+  color: #8a6851;
+  gap: 13px;
+  font-size: 7px;
+}
+
+.titleText {
+  margin-top: 10px;
+}
+
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 20px;
+}
+
+.writeButton {
+  background-color: #a2a8d3;
+  border-color: #6767c0;
+  height: 50px;
+}
+
+.exitButton {
+  background-color: #fcede2;
+  border-color: #8a6851;
+  color: #8a6851;
+  height: 50px;
 }

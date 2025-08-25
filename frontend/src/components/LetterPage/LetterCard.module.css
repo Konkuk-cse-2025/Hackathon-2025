@@ -1,0 +1,39 @@
+.letterCard {
+  background: #fff9f5; /* 편지지 느낌 */
+  border: 1px solid #8a6851;
+  border-radius: 12px;
+  padding: 20px 16px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  gap: 6px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between; /* 제목 왼쪽, 날짜 오른쪽 */
+  align-items: center;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #7b5734; /* 잉크색 */
+  margin: 0;
+}
+
+.date {
+  font-size: 12px;
+  color: #a97455;
+  white-space: nowrap;
+}
+
+.body {
+  font-size: 14px;
+  color: #7b5734;
+  margin-left: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* 한 줄만 */
+}
