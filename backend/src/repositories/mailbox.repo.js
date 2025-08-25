@@ -1,5 +1,5 @@
 // src/repositories/mailbox.repo.js
-const prisma = require('../../prisma/client');
+const prisma = require('../config/prisma');
 
 async function create({ ownerId, name, type, lat, lng, hint, passwordHash }) {
   return prisma.mailbox.create({
