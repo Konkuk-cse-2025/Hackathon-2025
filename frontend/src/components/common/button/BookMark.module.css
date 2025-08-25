@@ -1,0 +1,22 @@
+.container {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.container:focus,
+.container:focus-visible,
+.container:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+  display: block;
+  pointer-events: none; /* 클릭 타겟을 버튼으로 고정 (선택) */
+}
