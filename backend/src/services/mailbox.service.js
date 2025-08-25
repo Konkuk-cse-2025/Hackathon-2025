@@ -38,7 +38,7 @@ async function createMailbox({
   }
 
   return mailboxRepo.create({
-    ownerId: Number(ownerId),
+    ownerId,
     name,
     type,
     lat: Number(lat),

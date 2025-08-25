@@ -13,7 +13,7 @@ enum MailboxType {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String      @id @default(cuid())
   email     String   @unique
   password  String
   name      String
@@ -33,8 +33,8 @@ model Mailbox {
   createdAt    DateTime    @default(now())
   letters      Letter[]
 
-  ownerId      Int
-  owner        User        @relation(fields: [ownerId], references: [id])
+  ownerId     String? 
+  owner        User?       @relation(fields: [ownerId], references: [id])
 
   @@index([lat, lng])
   @@index([ownerId, createdAt])
@@ -43,7 +43,7 @@ model Mailbox {
 model Letter {
   id        Int      @id @default(autoincrement())
   mailboxId Int
-  authorId  Int?
+  authorId  String?
   title     String
   content   String
   createdAt DateTime @default(now())
