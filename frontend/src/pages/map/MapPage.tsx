@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { fetchLetterboxes } from "@/apis/Letterboxes";
-
 import Header from "@/components/common/Header/Header";
 import Button from "@/components/common/button/Button";
 import NaverMap from "@/components/MapPage/NaverMap";
@@ -94,7 +93,7 @@ export default function MapPage() {
 
   return (
     <div className={styles.page}>
-      <Header title="지도" />
+      <Header mode="imageOnly" imageSrc="/icons/Logo_write.png" alt="편지함" imageWidth={80} />
       <div className={styles.mapPlaceholder}>
         <NaverMap
           letterboxes={boxes}
@@ -127,20 +126,18 @@ export default function MapPage() {
             )}
           </Backdrop>
         )}
-        <div className={styles.cta}>
+        <div className={styles.ctaRight}>
           <div className={styles.actionsRight}>
             <NavLink to="/letterbox">
               <Button
                 fullWidth={false}
                 rightIcon={
-                  <img src="/icons/letterbox.png" alt="" aria-hidden="true" />
+                  <img src="/icons/letter_make.png" alt="" aria-hidden="true" />
                 }
               />
             </NavLink>
-
-            <NavLink to="/write">
-              <Button>편지쓰기</Button>
-            </NavLink>
+            
+            
           </div>
         </div>
 
