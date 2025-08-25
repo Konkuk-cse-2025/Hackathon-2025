@@ -29,7 +29,7 @@ export default function LoginPage() {
   return (
     <div className={styles.page}>
       <form className={styles.card} onSubmit={onSubmit}>
-        <h2>LetterUs</h2>
+        <img src="/icons/Logo.png" alt="" aria-hidden="true" className={styles.inlineImg} />
         <input
           placeholder="아이디"
           value={id}

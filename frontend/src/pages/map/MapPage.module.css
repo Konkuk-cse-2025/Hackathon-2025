@@ -10,14 +10,26 @@
   z-index: 0;
 }
 
+/* 기존 .cta는 가운데 고정 */
 .cta {
-  position: absolute; /* 지도 위에 띄우기 */
+  position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: 96px; /* BottomNav 위로 띄우기 */
-  z-index: 1000; /* 지도보다 확 높게 */
+  bottom: 96px;
+  z-index: 1000;
   pointer-events: auto;
 }
+
+/* 👉 오른쪽 고정 버전 */
+.ctaRight {
+  position: absolute;
+  right: 16px;     /* 오른쪽 여백 */
+  bottom: 96px;
+  z-index: 1000;
+  pointer-events: auto;
+  transform: none; /* 중요: 가운데로 당기는 변환 제거 */
+}
+
 
 .actionsRight {
   display: flex;

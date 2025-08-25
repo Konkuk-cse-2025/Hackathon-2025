@@ -38,6 +38,7 @@ export default function SignupPage() {
   return (
     <div className={styles.page}>
       <form className={styles.card} onSubmit={onSubmit}>
+        <img src="/icons/Logo.png" alt="" aria-hidden="true" className={styles.inlineImg} />
         <h2>회원가입</h2>
 
         <input
