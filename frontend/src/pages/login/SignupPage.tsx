@@ -19,18 +19,16 @@ export default function SignupPage() {
     // 간단 검증
     if (!id || !name || !pw) return setError("모든 필드를 입력해주세요.");
     if (pw !== pw2) return setError("비밀번호가 일치하지 않습니다.");
-    if (pw.length < 4) return setError("비밀번호는 4자 이상이어야 합니다.");
+    if (pw.length < 4) return setError("비밀번호는 8자 이상이어야 합니다.");
 
     try {
       setLoading(true);
-      const { user, token } = await signup({ id, name, password: pw });
-      localStorage.setItem("token", token);
-      // 가입 직후 로그인 상태로 메인 이동
-      nav("/map", { replace: true });
-      console.log("회원가입 성공:", user);
+      await signup({ id, name, password: pw }); // ← 성공만 확인
+
+      // ✅ 토큰 저장하지 말고 로그인 화면으로 보냄 (뒤로가기 방지 + 아이디 프리필)
+      nav("/login", { replace: true, state: { id } });
     } catch (err: any) {
       console.error(err);
-      // 백엔드에서 ID 중복 시 409/400 등을 던지면 메시지 매핑
       setError(err.response?.data?.message || "회원가입에 실패했습니다.");
     } finally {
       setLoading(false);
@@ -40,6 +38,7 @@ export default function SignupPage() {
   return (
     <div className={styles.page}>
       <form className={styles.card} onSubmit={onSubmit}>
+        <img src="/icons/Logo.png" alt="" aria-hidden="true" className={styles.inlineImg} />
         <h2>회원가입</h2>
 
         <input
@@ -72,7 +71,10 @@ export default function SignupPage() {
         {error && <p className={styles.error}>{error}</p>}
 
         <p className={styles.helper}>
-          이미 계정이 있나요? <Link to="/login">로그인</Link>
+          이미 계정이 있나요?{" "}
+          <Link to="/login" className={styles.link}>
+            로그인
+          </Link>
         </p>
       </form>
     </div>

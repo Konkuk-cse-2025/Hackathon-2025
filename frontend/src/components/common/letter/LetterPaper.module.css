@@ -1,0 +1,115 @@
+.wrap {
+  color: #7b5734;
+}
+.titleArea {
+  margin: 12px 0 10px;
+}
+.title {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+}
+.date {
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  color: #a97455;
+}
+
+/* ✅ 카드 레이어: 사라졌던 테두리/그림자 복원 */
+.paperCard {
+  position: relative;
+  margin-top: 10px;
+  padding-bottom: 24px; /* 북마크 여유 */
+}
+.paper {
+  background: var(--panel);
+  border: 1.5px solid #c9d8c5;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 0 10px;
+}
+
+.paperInner {
+  position: relative;
+  top: -15px;
+  border-radius: 12px;
+  overflow: hidden; /* 둥근 모서리 때문에 유지 */
+  padding: var(--lines-first-offset) 18px var(--lines-last-offset);
+}
+
+/* 손그림 라인 배경 */
+.paperInner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  background-image: url("/icons/letter_line1.png");
+  background-repeat: repeat-y; /* ✅ 세로로 반복해서 ‘잘림’ 방지 */
+  background-origin: content-box; /* ✅ padding 안쪽부터 채움 */
+  background-position: center top; /* 시작 위치 */
+  background-size: 100%; /* ✅ 좌우 padding(18px*2) 제외한 폭 */
+  /* 필요 시: background-position: center var(--lines-first-offset); */
+
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 안에 들어가는 글씨/To/From은 위에 오도록 */
+.paperInner > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* 컨테이너가 너무 작아 잘리지 않도록 최소 높이(선택) */
+.paperInner {
+  min-height: 420px;
+} /* 원본 라인 높이에 맞춰 조절 */
+
+.toLabel,
+.fromLabel {
+  font-size: 15px;
+  color: #a97455;
+  background: var(--panel);
+  padding: 0 6px;
+  position: absolute;
+}
+.toLabel {
+  top: 40px;
+  left: calc(var(--side-padding) - 4px);
+  line-height: var(--line-gap); /* ← 줄 간격과 동일 */
+  /* 첫 줄을 정확히 올리기 (이미지 첫 줄 위치와 맞게 보정) */
+  transform: translateY(calc(var(--first-baseline-shift) * -1));
+}
+.fromLabel {
+  bottom: 20px;
+  right: 100px;
+}
+
+/* ✨ 본문: 줄에 딱 맞추기 */
+.body {
+  position: relative;
+  top: 35px;
+  margin-top: var(--body-top-align);
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ink);
+  resize: none; /* 소프트랩 계산 일관성 */
+  min-height: calc(var(--lines-height) - 120px);
+  line-height: 2;
+  padding: 0 4px;
+  caret-color: var(--brand);
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: none;
+}
+
+.bookmark {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row-reverse;
+}

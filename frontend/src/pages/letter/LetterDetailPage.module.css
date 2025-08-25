@@ -1,0 +1,171 @@
+/* 페이지 레이아웃 */
+.page {
+  padding: 0cqh 30px;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+/* 헤더 */
+.header {
+  position: sticky;
+  top: 0;
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  height: 52px;
+  background: #a97455; /* 카푸치노 브라운 */
+  color: #f6e7d8;
+
+  margin-bottom: 16px;
+}
+.brand {
+  text-align: reverse;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  font-size: 20px;
+}
+.backBtn,
+.headerRight {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* 제목/날짜 */
+.titleArea {
+  text-align: center;
+  margin: 12px 0 10px;
+}
+.title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+.date {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #a97455;
+}
+
+/* 편지지 영역 */
+.paperWrap {
+  position: relative;
+  margin-top: 10px;
+}
+
+.paper {
+  border: 1px solid #c9d8c5; /* 세이지 보더 */
+  border-radius: 10px;
+  background: #fff9f5; /* 크림 */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 14px;
+}
+
+/* 내부 패딩과 줄 배경 */
+.paperInner {
+  position: relative;
+  border-radius: 8px;
+  padding: 18px 14px 28px;
+  /* 수평 줄 패턴: data-URI SVG 사용 (가볍고 깔끔) */
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 22px,
+    rgba(169, 133, 81, 0.35) 22px,
+    rgba(169, 133, 81, 0.35) 23px
+  );
+}
+
+/* 라벨 */
+.toLabel,
+.fromLabel {
+  position: absolute;
+  font-size: 20px;
+  color: #a97455;
+  background: #fff9f5;
+  padding: 0 6px;
+}
+.toLabel {
+  top: 4px;
+  left: 8px;
+}
+.fromLabel {
+  bottom: 4px;
+  right: 8px;
+}
+
+/* 본문 (줄 위에 얹히도록 배경 없음) */
+.body {
+  margin: 100px 2px 12px 2px;
+  font-size: 14px;
+  line-height: 23px; /* 위 줄 패턴 높이(22~23px)와 맞춤 */
+  white-space: pre-wrap; /* 개행 보존 */
+  color: #7b5734;
+  background: transparent;
+}
+
+/* 북마크 */
+.bookmark {
+  position: absolute;
+  right: 10px;
+  bottom: -18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #c9d8c5;
+  background: #fff9f5;
+  color: #7b5734;
+  font-size: 18px;
+  line-height: 34px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* 하단 액션 */
+.actionBar {
+  margin-top: 80px;
+  display: grid;
+  gap: 10px;
+}
+.primary {
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: 14px;
+  color: #7b5734;
+  font-weight: 600;
+  cursor: pointer;
+  /* 핑크 → 라벤더 그라데이션 */
+  background-image: linear-gradient(90deg, #eec4c4 0%, #a2a8d3 100%);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+}
+.primary:hover {
+  filter: brightness(0.98);
+}
+
+.secondary {
+  width: 100%;
+  padding: 10px;
+  border-radius: 14px;
+  background: transparent;
+  border: 1px solid #7b5734;
+  color: #7b5734;
+  cursor: pointer;
+}
+.secondary:hover {
+  background: #f6e7d8;
+}
+
+/* 작은 화면 여백 튜닝 */
+@media (max-width: 380px) {
+  .page {
+    padding: 12px;
+  }
+  .paperInner {
+    padding: 16px 10px 26px;
+  }
+}

@@ -7,7 +7,7 @@ import WritePage from "@/pages/write/WritePage";
 import LetterPage from "@/pages/letter/LetterPage";
 import MyPage from "@/pages/mypage/MyPage";
 import LetterboxPage from "@/pages/letterbox/Letterbox";
-//import WriteBoxPage from "@/pages/write/WriteBoxPage";
+import LetterDetailPage from "@/pages/letter/LetterDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +19,7 @@ const router = createBrowserRouter([
       { path: "map", element: <MapPage /> },
       { path: "write", element: <WritePage /> },
       { path: "letter/:id", element: <LetterPage /> },
+      { path: "letter/:id/:letterId", element: <LetterDetailPage /> },
       { path: "mypage", element: <MyPage /> },
       { path: "letterbox", element: <LetterboxPage /> },
       //{ path: "box/new", element: <WriteBoxPage /> },
