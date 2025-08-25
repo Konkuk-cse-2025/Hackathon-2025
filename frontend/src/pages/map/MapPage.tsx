@@ -22,13 +22,13 @@ export type Letterbox = {
 export default function MapPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [boxes, setBoxes] = useState<Letterbox[]>([]);
+  const navigate = useNavigate();
 
   const selectedBox = useMemo(
     () => boxes.find((b) => b.id === selected) ?? null,
     [boxes, selected]
   );
 
-  const navigate = useNavigate();
   useEffect(() => {
     (async () => {
       try {
@@ -62,13 +62,25 @@ export default function MapPage() {
         );
       } catch (e) {
         console.error(e);
-        // 위치 권한 거부 시 기본 좌표(서울 시청 등)로 조회해도 OK
-        const fallback = await fetchLetterboxes({
-          lat: 37.5665,
-          lng: 126.978,
-          radius: 1000,
-        });
-        setBoxes(fallback);
+        try {
+          const fallback = await fetchLetterboxes({
+            lat: 37.5665,
+            lng: 126.978,
+            radius: 1000,
+          });
+          setBoxes(
+            fallback.map((it: any) => ({
+              id: String(it.id),
+              name: it.name,
+              ownerName: it.ownerName ?? it.owner?.name ?? "익명",
+              lat: it.lat,
+              lng: it.lng,
+              isSecret: it.isSecret,
+            }))
+          );
+        } catch (e2) {
+          console.error("fallback also failed", e2);
+        }
       }
     })();
   }, []);
@@ -122,12 +134,10 @@ export default function MapPage() {
                 rightIcon={
                   <img src="/icons/letter_make.png" alt="" aria-hidden="true" />
                 }
-              ></Button>
+              />
             </NavLink>
             
-            <NavLink to="/write">
-        
-            </NavLink>
+            
           </div>
         </div>
 

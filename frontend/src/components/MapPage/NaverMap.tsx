@@ -100,17 +100,19 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
             const here = new naver.maps.LatLng(latitude, longitude);
 
             // 1) 정확도 필터: 80m 이상 오차는 무시
-            if (accuracy && accuracy > 80) return;
+            // if (accuracy && accuracy > 80) return;
 
             // 2) 점프 필터: 1초 내 60m 이상 이동은 무시
             const prev = lastPosRef.current;
             if (prev) {
               const dt = (timestamp - prev.t) / 1000;
-              const dist = naver.maps.GeometryUtil.getDistance(
-                new naver.maps.LatLng(prev.lat, prev.lng),
-                here
-              );
-              if (dt < 1 && dist > 60) return;
+              if (naver.maps.geometry && naver.maps.geometry.spherical) {
+                const dist = naver.maps.geometry.spherical.computeDistance(
+                  new naver.maps.LatLng(prev.lat, prev.lng),
+                  here
+                );
+                if (dt < 1 && dist > 60) return;
+              }
             }
 
             // 3) 이동 평균(스무딩)
