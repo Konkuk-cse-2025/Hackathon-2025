@@ -16,13 +16,15 @@ const TOTAL_PAGES = 3;
 
 export default function WritePage() {
   const [title, setTitle] = useState("");
-  const [to, setTo] = useState("");      // 받는 사람
-  const [from, setFrom] = useState("");  // 보내는 사람
+  const [to, setTo] = useState(""); // 받는 사람
+  const [from, setFrom] = useState(""); // 보내는 사람
   const [pages, setPages] = useState<string[]>(Array(TOTAL_PAGES).fill(""));
   const [currentPage, setCurrentPage] = useState(0);
 
   const pagerRef = useRef<HTMLDivElement | null>(null);
-  const textRefs = useRef<(HTMLTextAreaElement | null)[]>(Array(TOTAL_PAGES).fill(null));
+  const textRefs = useRef<(HTMLTextAreaElement | null)[]>(
+    Array(TOTAL_PAGES).fill(null)
+  );
   const mirrorRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
 
@@ -77,18 +79,20 @@ export default function WritePage() {
     return true;
   };
 
-  const onBodyChange = (idx: number) => (e: ChangeEvent<HTMLTextAreaElement>) => {
-    const ok = setPageSafely(idx, e.target.value);
-    if (!ok) e.target.value = pages[idx]; // 제한 초과 시 롤백
-  };
+  const onBodyChange =
+    (idx: number) => (e: ChangeEvent<HTMLTextAreaElement>) => {
+      const ok = setPageSafely(idx, e.target.value);
+      if (!ok) e.target.value = pages[idx]; // 제한 초과 시 롤백
+    };
 
-  const onBodyKeyDown = (idx: number) => (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter") {
-      const ta = textRefs.current[idx];
-      const visual = countVisualLines(ta, pages[idx]);
-      if (visual >= MAX_LINES) e.preventDefault();
-    }
-  };
+  const onBodyKeyDown =
+    (idx: number) => (e: KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter") {
+        const ta = textRefs.current[idx];
+        const visual = countVisualLines(ta, pages[idx]);
+        if (visual >= MAX_LINES) e.preventDefault();
+      }
+    };
 
   /** 페이지 스크롤 → 현재 페이지 번호 계산 */
   useEffect(() => {
@@ -137,94 +141,82 @@ export default function WritePage() {
   };
 
   return (
-<<<<<<< HEAD
     <>
-      <Header title="편지 쓰기" />
+      <Header title="편지쓰기" />
       <div className={styles.page}>
-        <form className={styles.form}>
-          <input placeholder="제목" />
-          <textarea placeholder="내용" rows={10} />
-          <div className={styles.actions}>
-            <button type="button">임시저장</button>
-            <button type="submit">저장</button>
+        <div className={styles.form}>
+          {/* 제목 */}
+          <label className={styles.inputBlock}>
+            <input
+              className={styles.titleInput}
+              placeholder="편지 제목"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+            />
+          </label>
+
+          {/* 스와이프 페이지 */}
+          <div className={styles.pager} ref={pagerRef}>
+            {Array.from({ length: TOTAL_PAGES }).map((_, idx) => (
+              <section className={styles.paper} key={idx}>
+                <div className={styles.paperInner}>
+                  {/* 첫 페이지만 To */}
+                  {idx === 0 && (
+                    <div className={styles.row}>
+                      <span className={styles.meta}>To.</span>
+                      <input
+                        className={styles.metaInput}
+                        placeholder="받는 사람"
+                        value={to}
+                        onChange={(e) => setTo(e.target.value)}
+                      />
+                    </div>
+                  )}
+
+                  {/* 본문 */}
+                  <textarea
+                    ref={setTextRef(idx)}
+                    className={styles.bodyArea}
+                    value={pages[idx]}
+                    onChange={onBodyChange(idx)}
+                    onKeyDown={onBodyKeyDown(idx)}
+                    placeholder="내용을 적어주세요…"
+                  />
+
+                  {/* 첫 페이지는 From + 저장, 나머지는 저장만 */}
+                  {idx === 0 ? (
+                    <div className={styles.rowBottom}>
+                      <span className={styles.meta}>From.</span>
+                      <input
+                        className={styles.metaInput}
+                        placeholder="보내는 사람"
+                        value={from}
+                        onChange={(e) => setFrom(e.target.value)}
+                      />
+                      {SaveButton}
+                    </div>
+                  ) : (
+                    <div className={styles.rowBottomSpacer}>{SaveButton}</div>
+                  )}
+                </div>
+              </section>
+            ))}
           </div>
-        </form>
+
+          {/* 하단 페이지 도트 */}
+          <div className={styles.pageDots}>
+            {Array.from({ length: TOTAL_PAGES }).map((_, i) => (
+              <span
+                key={i}
+                className={`${styles.dot} ${
+                  i === currentPage ? styles.dotActive : ""
+                }`}
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </>
-=======
-    <div className={styles.page}>
-      <Header title="편지쓰기" />
-      <div className={styles.form}>
-        {/* 제목 */}
-        <label className={styles.inputBlock}>
-          <input
-            className={styles.titleInput}
-            placeholder="편지 제목"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-          />
-        </label>
-
-        {/* 스와이프 페이지 */}
-        <div className={styles.pager} ref={pagerRef}>
-          {Array.from({ length: TOTAL_PAGES }).map((_, idx) => (
-            <section className={styles.paper} key={idx}>
-              <div className={styles.paperInner}>
-                {/* 첫 페이지만 To */}
-                {idx === 0 && (
-                  <div className={styles.row}>
-                    <span className={styles.meta}>To.</span>
-                    <input
-                      className={styles.metaInput}
-                      placeholder="받는 사람"
-                      value={to}
-                      onChange={(e) => setTo(e.target.value)}
-                    />
-                  </div>
-                )}
-
-                {/* 본문 */}
-                <textarea
-                  ref={setTextRef(idx)}
-                  className={styles.bodyArea}
-                  value={pages[idx]}
-                  onChange={onBodyChange(idx)}
-                  onKeyDown={onBodyKeyDown(idx)}
-                  placeholder="내용을 적어주세요…"
-                />
-
-                {/* 첫 페이지는 From + 저장, 나머지는 저장만 */}
-                {idx === 0 ? (
-                  <div className={styles.rowBottom}>
-                    <span className={styles.meta}>From.</span>
-                    <input
-                      className={styles.metaInput}
-                      placeholder="보내는 사람"
-                      value={from}
-                      onChange={(e) => setFrom(e.target.value)}
-                    />
-                    {SaveButton}
-                  </div>
-                ) : (
-                  <div className={styles.rowBottomSpacer}>{SaveButton}</div>
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
-
-        {/* 하단 페이지 도트 */}
-        <div className={styles.pageDots}>
-          {Array.from({ length: TOTAL_PAGES }).map((_, i) => (
-            <span
-              key={i}
-              className={`${styles.dot} ${i === currentPage ? styles.dotActive : ""}`}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
->>>>>>> origin/main
   );
 }

@@ -7,7 +7,7 @@ interface BookMarkProps {
 
 export default function BookMark({ onClick, isSave = false }: BookMarkProps) {
   return (
-    <button className={styles.container} onClick={onClick}>
+    <button type="button" className={styles.container} onClick={onClick}>
       <img
         src={isSave ? "/icons/bookmark_fill.svg" : "/icons/bookmark_line.svg"}
         alt={isSave ? "북마크 해제" : "북마크 추가"}
