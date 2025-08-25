@@ -13,7 +13,7 @@ export default function LetterDetailPage() {
     date: "2025.01.03",
     to: "To.",
     from: "From.",
-    body: `창밖에는 하루 종일 비가 내렸어...\n\n괜찮다면, 너의 하루도 나에게 들려줄래?`,
+    body: `창밖에는 하루 종일 비가 내렸어.... 어쩌구 저쩌구`,
     saved: false,
   };
   const [saved, setSaved] = useState<boolean>(letter.saved);
