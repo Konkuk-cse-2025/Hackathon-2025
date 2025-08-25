@@ -125,6 +125,12 @@ export default function MapPage() {
                 }
               ></Button>
             </NavLink>
+
+            <NavLink to="/write">
+              <Button>
+                  편지쓰기
+              </Button>
+            </NavLink>
           </div>
         </div>
 

@@ -13,32 +13,42 @@ export default function MyPage() {
       try {
         setUser(JSON.parse(saved));
       } catch {
-        // 파싱 실패 시 안전하게 초기화
         localStorage.removeItem("user");
       }
     }
   }, []);
+
   return (
     <div className={styles.page}>
+      {/* 봉투 플랩 헤더 */}
       <header className={styles.header}>
-        <Header title={`${user ? user.name : "나"}의 편지함`} />
-        <img
-          src="/icons/letterbox.png"
-          alt=""
-          className={styles.headerEmoji}
-          aria-hidden="true"
-        />
+        <div className={styles.headerInner}>
+          <Header title={`${user ? user.name : "나"}의 편지함`} />
+        </div>
       </header>
 
       <main className={styles.main}>
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>내가 쓴 편지</h2>
+        {/* 내가 쓴 편지 */}
+        <section className={`${styles.card} ${styles.pink}`}>
+          <div className={styles.cardDots} aria-hidden="true">…</div>
+          <h2 className={styles.cardTitle}>
+            내가 쓴 편지<img src="/icons/Vector.png" alt="" aria-hidden="true" className={styles.inlineImg} />
+          
+          </h2>
+          {/* 콘텐츠 영역: 리스트/링크가 들어갈 자리 */}
+          <div className={styles.cardBody}></div>
         </section>
 
-        <section className={styles.card}>
-          <h2 className={styles.cardTitle}>저장한 편지</h2>
+        {/* 저장한 편지 */}
+        <section className={`${styles.card} ${styles.green}`}>
+          <div className={styles.cardDots} aria-hidden="true">…</div>
+          <h2 className={styles.cardTitle}>
+            저장한 편지<img src="/icons/mail_line.png" alt="" aria-hidden="true" className={styles.inlineImg} />
+          </h2>
+          <div className={styles.cardBody}></div>
         </section>
       </main>
+
       <BottomNav />
     </div>
   );
