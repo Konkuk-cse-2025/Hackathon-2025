@@ -6,6 +6,7 @@ import LetterCard from "@/components/LetterPage/LetterCard";
 import Button from "@/components/common/button/Button";
 import { getMailboxLetters, Letter } from "@/apis/letter";
 
+
 const MOCK_LETTERS: Letter[] = [
   {
     id: "l3",

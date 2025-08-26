@@ -7,9 +7,16 @@ const cors = require('cors');
 
 const app = express();
 
-// ====== 기본 설정/로그 ======
-console.log('NODE_ENV =', process.env.NODE_ENV || '(not set)');
-console.log('DATABASE_URL =', process.env.DATABASE_URL);
+// 공통 미들웨어
+const corsOptions = {
+  origin: "http://localhost:5173", // 클라이언트의 도메인
+  credentials: true, // 자격 증명(쿠키, 인증 헤더 등)을 허용
+};
+
+app.use(cors(corsOptions));
+//app.options('*', cors(corsOptions));
+
+app.use(express.json());
 
 // ====== 공통 미들웨어 ======
 app.use(cors());                              // 프론트 연동 시 필요
@@ -42,6 +49,7 @@ app.use((req, res, next) => {
   err.status = 404;
   next(err);
 });
+
 
 // ====== 공통 에러 핸들러 (맨 마지막) ======
 app.use((err, req, res, _next) => {
