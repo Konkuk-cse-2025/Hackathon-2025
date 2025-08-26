@@ -3,6 +3,7 @@ const authService = require("../services/auth.service.js");
 
 exports.postSignup = async (req, res, next) => {
   try {
+    console.log("[signup] body:", req.body);
     const result = await authService.signup(req.body);
     return res.status(201).json(result);
   } catch (err) {
@@ -23,16 +24,6 @@ exports.me = async (req, res, next) => {
   try {
     // 더 이상 userRepo 조회 안 함
     return res.json({ user: req.user });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.postSignup = async (req, res, next) => {
-  try {
-    console.log("[signup] body:", req.body);
-    const result = await authService.signup(req.body);
-    return res.status(201).json(result);
   } catch (err) {
     next(err);
   }
