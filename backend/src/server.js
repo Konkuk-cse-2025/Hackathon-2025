@@ -1,16 +1,16 @@
 // src/server.js
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 
 // 공통 미들웨어
 const corsOptions = {
   origin: "http://localhost:5173", // 클라이언트의 도메인
-  credentials: true, // 자격 증명(쿠키, 인증 헤더 등)을 허용
+  credentials: false, // 자격 증명(쿠키, 인증 헤더 등)을 허용
 };
 
 app.use(cors(corsOptions));
@@ -19,46 +19,45 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // ====== 공통 미들웨어 ======
-app.use(cors());                              // 프론트 연동 시 필요
-app.use(express.json());                       // JSON Body 파싱
+app.use(cors()); // 프론트 연동 시 필요
+app.use(express.json()); // JSON Body 파싱
 app.use(express.urlencoded({ extended: false })); // 폼 전송 파싱(선택)
 
 // ====== 헬스체크 ======
-app.get('/', (_req, res) => res.send('OK'));
-app.get('/healthz', (_req, res) => res.json({ ok: true }));
+app.get("/", (_req, res) => res.send("OK"));
+app.get("/healthz", (_req, res) => res.json({ ok: true }));
 
 // ====== 라우터 마운트 ======
 try {
-  const authRoutes = require('./routes/auth.route');
-  app.use('/auth', authRoutes);
-  console.log('[server] /auth mounted');
+  const authRoutes = require("./routes/auth.route");
+  app.use("/auth", authRoutes);
+  console.log("[server] /auth mounted");
 } catch (e) {
-  console.warn('⚠️  /auth route not mounted:', e.message);
+  console.warn("⚠️  /auth route not mounted:", e.message);
 }
 
 // mailboxes / letters 라우트는 반드시 존재해야 함
-const mailboxRoutes = require('./routes/mailbox.route');
-const letterRoutes = require('./routes/letter.route');
+const mailboxRoutes = require("./routes/mailbox.route");
+const letterRoutes = require("./routes/letter.route");
 
-app.use('/mailboxes', mailboxRoutes); // 예: GET /mailboxes/:id
-app.use('/letters', letterRoutes);     // 예: POST /letters/:id/bookmark
+app.use("/mailboxes", mailboxRoutes); // 예: GET /mailboxes/:id
+app.use("/letters", letterRoutes); // 예: POST /letters/:id/bookmark
 
 // ====== 404 핸들러 (라우트 아래) ======
 app.use((req, res, next) => {
-  const err = new Error('Not Found');
+  const err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
 
-
 // ====== 공통 에러 핸들러 (맨 마지막) ======
 app.use((err, req, res, _next) => {
   const status = err.status || 500;
-  if (process.env.NODE_ENV !== 'production') {
-    console.error('[error]', err);
+  if (process.env.NODE_ENV !== "production") {
+    console.error("[error]", err);
   }
   res.status(status).json({
-    message: err.message || 'Server error',
+    message: err.message || "Server error",
   });
 });
 
