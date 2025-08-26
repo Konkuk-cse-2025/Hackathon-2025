@@ -6,27 +6,31 @@ import {
   ChangeEvent,
   KeyboardEvent,
 } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Header from "@/components/common/Header/Header";
 import styles from "./WritePage.module.css";
+import { createLetter } from "@/apis/letter";
 
 const MAX_LINES = 11;
 const TOTAL_PAGES = 3;
 
 export default function WritePage() {
+  const { id: mailboxId } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [title, setTitle] = useState("");
   const [to, setTo] = useState(""); // 받는 사람
   const [from, setFrom] = useState(""); // 보내는 사람
   const [pages, setPages] = useState<string[]>(Array(TOTAL_PAGES).fill(""));
   const [currentPage, setCurrentPage] = useState(0);
+  const [saving, setSaving] = useState(false);
 
   const pagerRef = useRef<HTMLDivElement | null>(null);
   const textRefs = useRef<(HTMLTextAreaElement | null)[]>(
     Array(TOTAL_PAGES).fill(null)
   );
   const mirrorRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
 
   /** --------- 숨겨진 미러 div로 “보이는 줄 수” 계산 --------- */
   useEffect(() => {
@@ -109,19 +113,30 @@ export default function WritePage() {
 
   /** 저장 API */
   const handleSave = async () => {
+    if (!mailboxId) {
+      alert("편지함 정보가 없습니다.");
+      return;
+    }
+    if (!title.trim()) {
+      alert("제목을 입력해주세요.");
+      return;
+    }
     try {
+      setSaving(true);
       const payload = {
-        title,
-        to,
-        from,
+        mailboxId,
+        title: title.trim(),
+        to: to.trim() || undefined,
+        from: from.trim() || undefined,
         body: pages.join("\n\n---page-break---\n\n"), // 3페이지 합침
       };
-      const res = await axios.post("/letters", payload);
-      console.log("저장 성공:", res.data);
-      navigate("/mappage");
+      await createLetter(payload);
+      navigate(`/mailboxes/${mailboxId}`);
     } catch (err) {
       console.error("저장 실패:", err);
       alert("저장에 실패했습니다.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -132,7 +147,7 @@ export default function WritePage() {
         <img src="/icons/png.png" alt="저장" />
       </button>
     ),
-    [title, to, from, pages]
+    [title, to, from, pages, saving]
   );
 
   /** ref 등록 */
