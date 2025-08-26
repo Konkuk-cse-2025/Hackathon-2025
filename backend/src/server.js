@@ -9,7 +9,14 @@ const app = express();
 console.log("DATABASE_URL =", process.env.DATABASE_URL);
 
 // 공통 미들웨어
-app.use(cors());
+const corsOptions = {
+  origin: "http://localhost:5173", // 클라이언트의 도메인
+  credentials: true, // 자격 증명(쿠키, 인증 헤더 등)을 허용
+};
+
+app.use(cors(corsOptions));
+//app.options('*', cors(corsOptions));
+
 app.use(express.json());
 
 // 헬스체크
@@ -38,6 +45,11 @@ app.use((err, req, res, next) => {
     console.error("[error]", err);
   }
   res.status(status).json({ message: err.message || "Server error" });
+});
+
+// 404 핸들러 추가
+app.use((req, res) => {
+  res.status(404).json({ message: "Not Found" });
 });
 
 const PORT = Number(process.env.PORT) || 3000;

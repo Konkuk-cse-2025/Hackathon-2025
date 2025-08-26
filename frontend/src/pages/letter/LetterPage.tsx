@@ -5,6 +5,7 @@ import styles from "./LetterPage.module.css";
 import LetterCard from "@/components/LetterPage/LetterCard";
 import Button from "@/components/common/button/Button";
 
+
 type Letter = {
   id: string;
   title: string;
