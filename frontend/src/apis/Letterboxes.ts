@@ -1,18 +1,5 @@
-import axios from "axios";
 import { api } from "./apiClient";
 import type { ServerLetterbox, UiLetterbox } from "@/types/letterbox";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
-
-function normalizeBase(base: string) {
-  if (/^https?:\/\//.test(base)) return base.replace(/\/+$/, "");
-  // '/api' 혹은 ':3000' 같은 값이 들어오면 현재 origin을 붙여줌
-  return `${window.location.origin}/${base.replace(/^\/+/, "")}`.replace(
-    /\/+$/,
-    ""
-  );
-}
-const BASE = normalizeBase(API_BASE);
 
 const mapServerToUi = (it: ServerLetterbox): UiLetterbox => ({
   id: String(it.id),
@@ -32,25 +19,16 @@ export async function fetchLetterboxes(params: {
   const lng = +params.lng.toFixed(6);
   const radius = Math.max(0, Math.floor(params.radius));
 
-  const qs = new URLSearchParams({
-    lat: String(lat),
-    lng: String(lng),
-    radius: String(radius),
-  });
-
-  const url = `${BASE}/mailboxes?${qs.toString()}`;
-  console.log("[fetchLetterboxes] GET", url);
+  console.log("[fetchLetterboxes] GET /mailboxes", { lat, lng, radius });
 
   try {
-    const { data } = await api.get<ServerLetterbox[]>(url);
+    const { data } = await api.get<ServerLetterbox[]>("/mailboxes", {
+      params: { lat, lng, radius }, // ✅ axios가 알아서 쿼리스트링 생성
+    });
     return data.map(mapServerToUi);
   } catch (e: any) {
     if (e.response) {
-      console.error(
-        "GET /mailboxes failed:",
-        e.response.status,
-        e.response.data
-      );
+      console.error("GET /mailboxes failed:", e.response.status, e.response.data);
     } else {
       console.error("GET /mailboxes error:", e.message);
     }
@@ -75,12 +53,12 @@ export async function createLetterbox(body: {
     passwordHint: body.isSecret ? body.passwordHint : undefined,
   };
 
-  const url = `${BASE}/mailboxes`;
-  console.log("[createLetterbox] POST", url, payload);
+  console.log("[createLetterbox] POST /mailboxes", payload);
 
   const { data } = await api.post<ServerLetterbox>("/mailboxes", payload);
   return mapServerToUi(data);
 }
+
 export async function canOpenLetterbox(params: {
   boxId: string;
   lat: number;
@@ -90,20 +68,16 @@ export async function canOpenLetterbox(params: {
   const payload: { lat: number; lng: number; password?: string } = {
     lat: +params.lat.toFixed(6),
     lng: +params.lng.toFixed(6),
+    ...(params.password ? { password: params.password } : {}),
   };
-  if (params.password) payload.password = params.password;
+
+  console.log("[canOpenLetterbox] POST", `/mailboxes/${params.boxId}/open`, payload);
 
   try {
-    // createLetterbox와 동일하게 api 인스턴스의 baseURL을 사용 (상대경로)
-    const { data } = await api.post<{ ok: boolean }>(
-      `/mailboxes/${params.boxId}/open`,
-      payload,
-      { withCredentials: true } // 서버가 세션/쿠키를 내려줄 수 있으므로
-    );
-    return !!data?.ok; // { ok: true } 기대
+    const { data } = await api.post<{ ok: boolean }>(`/mailboxes/${params.boxId}/open`, payload);
+    return !!data?.ok;
   } catch (e: any) {
     if (e.response) {
-      // 상태코드(401/403/409/400 등)를 상위에서 분기할 수 있게 보존
       const err = new Error(`open failed: ${e.response.status}`);
       (err as any).status = e.response.status;
       (err as any).data = e.response.data;

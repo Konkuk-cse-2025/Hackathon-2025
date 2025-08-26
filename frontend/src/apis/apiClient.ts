@@ -1,6 +1,17 @@
 import axios from "axios";
 
-export const api = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL });
+function normalizeBase(base: string) {
+  if (/^https?:\/\//.test(base)) return base.replace(/\/+$/, "");
+  return `${window.location.origin}/${base.replace(/^\/+/, "")}`.replace(/\/+$/, "");
+}
+const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+export const BASE = normalizeBase(API_BASE);
+
+export const api = axios.create({
+  baseURL: BASE,             // ✅ 모든 요청은 이 오리진으로
+  withCredentials: false,     // ✅ 쿠키/자격증명 전역 허용 (개발 단계)
+  headers: { "Content-Type": "application/json" },
+});
 
 // 요청마다 토큰 자동 첨부
 api.interceptors.request.use((config) => {
