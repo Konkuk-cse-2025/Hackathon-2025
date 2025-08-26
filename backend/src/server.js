@@ -7,13 +7,13 @@ const cors = require("cors");
 
 const app = express();
 
-// 공통 미들웨어
-const corsOptions = {
-  origin: "http://localhost:5173", // 클라이언트의 도메인
-  credentials: false, // 자격 증명(쿠키, 인증 헤더 등)을 허용
-};
+app.use(
+  cors({
+    origin: "http://localhost:5173", // 정확한 오리진
+    credentials: false, // Allow-Credentials
+  })
+);
 
-app.use(cors(corsOptions));
 //app.options('*', cors(corsOptions));
 
 app.use(express.json());
