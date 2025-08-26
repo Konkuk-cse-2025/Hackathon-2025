@@ -81,3 +81,34 @@ export async function createLetterbox(body: {
   const { data } = await api.post<ServerLetterbox>("/mailboxes", payload);
   return mapServerToUi(data);
 }
+export async function canOpenLetterbox(params: {
+  boxId: string;
+  lat: number;
+  lng: number;
+  password?: string;
+}): Promise<boolean> {
+  const payload: { lat: number; lng: number; password?: string } = {
+    lat: +params.lat.toFixed(6),
+    lng: +params.lng.toFixed(6),
+  };
+  if (params.password) payload.password = params.password;
+
+  try {
+    // createLetterbox와 동일하게 api 인스턴스의 baseURL을 사용 (상대경로)
+    const { data } = await api.post<{ ok: boolean }>(
+      `/mailboxes/${params.boxId}/open`,
+      payload,
+      { withCredentials: true } // 서버가 세션/쿠키를 내려줄 수 있으므로
+    );
+    return !!data?.ok; // { ok: true } 기대
+  } catch (e: any) {
+    if (e.response) {
+      // 상태코드(401/403/409/400 등)를 상위에서 분기할 수 있게 보존
+      const err = new Error(`open failed: ${e.response.status}`);
+      (err as any).status = e.response.status;
+      (err as any).data = e.response.data;
+      throw err;
+    }
+    throw e;
+  }
+}

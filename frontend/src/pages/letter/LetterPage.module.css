@@ -6,12 +6,7 @@
   flex-direction: column;
   gap: 30px;
 }
-.card {
-  background: #fff3d0;
-  border: 1px solid #d6a572;
-  border-radius: 12px;
-  padding: 16px;
-}
+
 .title {
   position: relative;
   top: 10px;
@@ -46,3 +41,42 @@
   color: #8a6851;
   height: 50px;
 }
+.letterButton {
+  all: unset; /* 기본 버튼 스타일 제거 */
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  background: #FAF0D7;
+  border: 1px solid #d6a572;
+  border-radius: 12px;
+  padding: 16px;
+  box-sizing: border-box;
+  transition: background 0.2s ease;
+}
+
+.letterButton:hover {
+  background: #fbecc7;
+}
+
+.letterTitle {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 8px;
+  color: #5b4633;
+}
+
+.letterPreview {
+  font-size: 14px;
+  color: #6b4e3d;
+  margin-bottom: 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.letterDate {
+  font-size: 12px;
+  color: #8a6851;
+  text-align: right;
+}
+
