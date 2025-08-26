@@ -114,11 +114,13 @@ const bookmark = async (req, res, next) => {
       e.status = 401;
       throw e;
     }
-
     const { id } = req.params;
+
+    // (정확한 created 여부 필요하면 서비스에서 upsert 이전에 조회하도록 변경)
     const { created, saved } = await svc.bookmark({ userId, letterId: id });
 
     return res.status(created ? 201 : 200).json({
+      ok: true,
       message: created ? '북마크 완료' : '이미 북마크 되어 있습니다',
       savedLetterId: saved.id,
     });
@@ -127,10 +129,7 @@ const bookmark = async (req, res, next) => {
   }
 };
 
-// --------------------
 // ✅ 편지 북마크 삭제
-// DELETE /letters/:id/bookmark
-// --------------------
 const unbookmark = async (req, res, next) => {
   try {
     const userId = getUserId(req);
@@ -139,15 +138,37 @@ const unbookmark = async (req, res, next) => {
       e.status = 401;
       throw e;
     }
-
     const { id } = req.params;
-    await svc.unbookmark({ userId, letterId: id });
 
-    // 멱등성: 존재하지 않아도 204
+    await svc.unbookmark({ userId, letterId: id });
     return res.status(204).send();
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = { create, listInMailbox, getOne, bookmark, unbookmark };
+// ✅ 북마크 여부 확인 (초기 상태 동기화용)
+const isBookmarked = async (req, res, next) => {
+  try {
+    const userId = getUserId(req);
+    if (!userId) {
+      const e = new Error('로그인이 필요합니다.');
+      e.status = 401;
+      throw e;
+    }
+    const { id } = req.params;
+    const saved = await svc.isBookmarked({ userId, letterId: id });
+    return res.json({ ok: true, saved, letterId: Number(id) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = {
+  create,
+  listInMailbox,
+  getOne,
+  bookmark,
+  unbookmark,
+  isBookmarked,   // ← 추가
+};
