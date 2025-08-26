@@ -13,31 +13,50 @@ export type GetMailboxLettersParams = {
   cursor?: string | null;
 };
 
+async function tryGet(path: string, params: any) {
+  try {
+    const { data } = await api.get(path, { params });
+    return data;
+  } catch (e: any) {
+    if (e?.response?.status === 404) return null; // 다음 후보 경로 시도
+    throw e; // 401/500 등은 그대로 던짐
+  }
+}
+
 export async function getMailboxLetters({
   mailboxId,
   limit = 20,
   cursor = null,
 }: GetMailboxLettersParams) {
-  const qs = new URLSearchParams();
-  qs.set("limit", String(limit));
-  if (cursor) qs.set("cursor", cursor);
+  const id = encodeURIComponent(mailboxId);
 
-  const { data } = await api.get(
-    `/mailboxes/${mailboxId}/letters?` + qs.toString()
+  const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 3000,
+    })
   );
+
+  const lat = pos.coords.latitude.toFixed(6);
+  const lng = pos.coords.longitude.toFixed(6);
+
+  const params: any = { lat, lng, limit };
+  if (cursor) params.cursor = cursor;
+
+  const { data } = await api.get(`/mailboxes/${mailboxId}/letters`, { params });
 
   const items: Letter[] = (data.items ?? []).map((it: any) => ({
     id: String(it.id),
-    title: it.title,
-    body: it.body,
-    // 서버가 createdAt(ISO)로 준다고 가정 → YYYY-MM-DD만 사용
+    title: it.title ?? (it.content ? it.content.split("\n")[0] : "무제"),
+    body: it.content ?? "",
     date: (it.createdAt ?? "").slice(0, 10),
   }));
 
   return {
     items,
     nextCursor: data.nextCursor ?? null,
-  } as { items: Letter[]; nextCursor: string | null };
+  };
 }
 
 export type CreateLetterPayload = {
@@ -46,12 +65,34 @@ export type CreateLetterPayload = {
   to?: string;
   from?: string;
   body: string;
+  lat: number;
+  lng: number;
 };
 
 // 명세: POST /letters  (헤더 Authorization: Bearer <JWT>)
 export async function createLetter(payload: CreateLetterPayload) {
-  const { data } = await api.post("/letters", payload);
-  // 서버가 저장된 편지 객체를 반환한다고 가정
+  const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 3000,
+    })
+  );
+
+  const lat = pos.coords.latitude.toFixed(6);
+  const lng = pos.coords.longitude.toFixed(6);
+
+  const req = {
+    mailboxId: payload.mailboxId,
+    title: payload.title,
+    content: payload.body, // 서버는 content를 기대
+    lat,
+    lng,
+    ...(payload.title ? { title: payload.title } : {}),
+    ...(payload.to ? { to: payload.to } : {}),
+    ...(payload.from ? { from: payload.from } : {}),
+  };
+  const { data } = await api.post("/letters", req);
   return data;
 }
 export async function fetchIsSaved(letterId: number) {

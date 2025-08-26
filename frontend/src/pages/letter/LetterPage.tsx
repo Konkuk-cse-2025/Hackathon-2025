@@ -6,7 +6,6 @@ import LetterCard from "@/components/LetterPage/LetterCard";
 import Button from "@/components/common/button/Button";
 import { getMailboxLetters, Letter } from "@/apis/letter";
 
-
 const MOCK_LETTERS: Letter[] = [
   {
     id: "l3",
@@ -118,7 +117,10 @@ export default function LetterPage() {
         )}
       </div>
       <div className={styles.footer}>
-        <Button className={styles.writeButton} onClick={() => nav(`/write`)}>
+        <Button
+          className={styles.writeButton}
+          onClick={() => nav(`/letter/${mailboxId}/write`)}
+        >
           편지 쓰기
         </Button>
         <Button className={styles.exitButton} onClick={() => nav(-1)}>
