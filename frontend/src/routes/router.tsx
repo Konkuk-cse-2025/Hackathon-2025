@@ -22,7 +22,6 @@ const router = createBrowserRouter([
       { path: "letter/:id/:letterId", element: <LetterDetailPage /> },
       { path: "mypage", element: <MyPage /> },
       { path: "letterbox", element: <LetterboxPage /> },
-      //{ path: "box/new", element: <WriteBoxPage /> },
     ],
   },
 ]);
