@@ -1,5 +1,5 @@
 // src/repositories/letter.repo.js
-const prisma = require('../../prisma/client');
+const prisma = require('../prisma/client');
 
 async function create({ mailboxId, authorId, title, content }) {
   return prisma.letter.create({
