@@ -7,7 +7,6 @@ import {
   KeyboardEvent,
 } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import Header from "@/components/common/Header/Header";
 import styles from "./WritePage.module.css";
 import { createLetter } from "@/apis/letter";
@@ -143,7 +142,7 @@ export default function WritePage() {
         title: title.trim(),
         to: to.trim() || undefined,
         from: from.trim() || undefined,
-        body: pages.join("\n\n---page-break---\n\n"),
+        body: pages.join(""),
         lat, // ★ 포함
         lng, // ★ 포함
         password: passwordFromNav || undefined,
