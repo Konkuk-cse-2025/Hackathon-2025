@@ -7,9 +7,8 @@ function isFiniteInRange(n, min, max) {
 const create = async (req, res, next) => {
   try {
     const { name, type, lat, lng, password, passwordHint } = req.body;
+    const ownerId = req.user?.id ?? null;
 
-    // ✅ 토큰에서 사용자 id → ownerId로 전달
-    const ownerId = req.user?.userId;
     console.log("Received ownerId:", ownerId);
     if (!ownerId) return res.status(401).json({ error: "인증 필요" });
 
