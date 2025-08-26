@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { fetchLetterboxes } from "@/apis/Letterboxes";
+import { fetchLetterboxes, canOpenLetterbox } from "@/apis/Letterboxes";
 import Header from "@/components/common/Header/Header";
 import Button from "@/components/common/button/Button";
 import NaverMap from "@/components/MapPage/NaverMap";
@@ -22,6 +22,8 @@ export type Letterbox = {
 export default function MapPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [boxes, setBoxes] = useState<Letterbox[]>([]);
+  const [myLat, setMyLat] = useState<number | null>(null);   // ⬅ 추가
+  const [myLng, setMyLng] = useState<number | null>(null);
   const navigate = useNavigate();
 
   const selectedBox = useMemo(
@@ -45,7 +47,8 @@ export default function MapPage() {
 
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
-
+        setMyLat(lat);                     // ⬅ 저장
+        setMyLng(lng); 
         // 2) 위치와 반경을 쿼리로 전달 (반경은 예시 1000m)
         const data = await fetchLetterboxes({ lat, lng, radius: 1000 });
 
@@ -62,6 +65,10 @@ export default function MapPage() {
         );
       } catch (e) {
         console.error(e);
+        const lat = 37.5665;
+        const lng = 126.978;
+        setMyLat(lat);                     // ⬅ 저장
+        setMyLng(lng);
         try {
           const fallback = await fetchLetterboxes({
             lat: 37.5665,
@@ -85,10 +92,50 @@ export default function MapPage() {
     })();
   }, []);
 
+  function handleSelect(id: string) {
+    setSelected(id);
+  }
+
   async function verifyPw(pw: string) {
-    // TODO: 실제 API 연동
-    // return api.verifyBox(selectedBox!.id, pw);
-    return pw === "1234"; // 임시
+    if (!selectedBox || myLat == null || myLng == null) return false;
+    try {
+      await canOpenLetterbox({
+        boxId: selectedBox.id,
+        lat: myLat,
+        lng: myLng,
+        password: pw,
+      });
+      return true; // { ok: true }
+    } catch (err: any) {
+      if (err.status === 409) {
+        // 비번 불일치
+        return false;
+      }
+      if (err.status === 401 || err.status === 403) {
+        alert("100m 이내에서만 열 수 있어요.");
+        return false;
+      }
+      alert("열람 검증 중 문제가 발생했어요.");
+      return false;
+    }
+  }
+  async function tryEnterPublic(boxId: string) {
+    if (myLat == null || myLng == null) {
+      alert("현재 위치를 가져오지 못했어요.");
+      return;
+    }
+    try {
+      await canOpenLetterbox({ boxId, lat: myLat, lng: myLng });
+      // 통과 시 이동
+      setSelected(null);
+      navigate(`/letter/${boxId}`);
+    } catch (err: any) {
+      if (err.status === 401 || err.status === 403) {
+        alert("100m 이내에서만 열 수 있어요.");
+      } else {
+        alert("열람 검증 중 문제가 발생했어요.");
+      }
+    }
   }
 
   return (
@@ -98,18 +145,20 @@ export default function MapPage() {
         <NaverMap
           letterboxes={boxes}
           selectedId={selected}
-          onSelect={(id) => setSelected(id)}
+          onSelect={handleSelect}  // ⬅ 변경
         />
+
         {selectedBox && (
           <Backdrop onClose={() => setSelected(null)}>
             {selectedBox.isSecret ? (
               <SecretBox
                 boxName={selectedBox.name}
                 ownerName={selectedBox.ownerName}
-                onVerify={verifyPw}
+                onVerify={verifyPw}                 // ⬅ 비밀함은 여기서 서버검증
                 onEnter={() => {
+                  // verifyPw에서 true 받은 후 호출됨
                   setSelected(null);
-                  navigate(`/boxes/${selectedBox.id}`);
+                  navigate(`/letter/${selectedBox.id}`); // ⬅ /letter/:id 로 이동
                 }}
                 onClose={() => setSelected(null)}
               />
@@ -117,27 +166,21 @@ export default function MapPage() {
               <PublicBox
                 boxName={selectedBox.name}
                 ownerName={selectedBox.ownerName}
-                onEnter={() => {
-                  setSelected(null);
-                  navigate(`/boxes/${selectedBox.id}`);
-                }}
+                onEnter={() => tryEnterPublic(selectedBox.id)} // ⬅ 공개함 거리검증
                 onClose={() => setSelected(null)}
               />
             )}
           </Backdrop>
         )}
+
         <div className={styles.ctaRight}>
           <div className={styles.actionsRight}>
             <NavLink to="/letterbox">
               <Button
                 fullWidth={false}
-                rightIcon={
-                  <img src="/icons/letter_make.png" alt="" aria-hidden="true" />
-                }
+                rightIcon={<img src="/icons/letter_make.png" alt="" aria-hidden="true" />}
               />
             </NavLink>
-            
-            
           </div>
         </div>
 
