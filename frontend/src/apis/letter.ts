@@ -11,6 +11,7 @@ export type GetMailboxLettersParams = {
   mailboxId: string;
   limit?: number;
   cursor?: string | null;
+  password?: string | null;
 };
 
 async function tryGet(path: string, params: any) {
@@ -27,9 +28,8 @@ export async function getMailboxLetters({
   mailboxId,
   limit = 20,
   cursor = null,
+  password = null,
 }: GetMailboxLettersParams) {
-  const id = encodeURIComponent(mailboxId);
-
   const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
     navigator.geolocation.getCurrentPosition(resolve, reject, {
       enableHighAccuracy: true,
@@ -43,6 +43,7 @@ export async function getMailboxLetters({
 
   const params: any = { lat, lng, limit };
   if (cursor) params.cursor = cursor;
+  if (password) params.password = password;
 
   const { data } = await api.get(`/mailboxes/${mailboxId}/letters`, { params });
 
@@ -67,6 +68,7 @@ export type CreateLetterPayload = {
   body: string;
   lat: number;
   lng: number;
+  password?: string;
 };
 
 // 명세: POST /letters  (헤더 Authorization: Bearer <JWT>)
@@ -88,7 +90,7 @@ export async function createLetter(payload: CreateLetterPayload) {
     content: payload.body, // 서버는 content를 기대
     lat,
     lng,
-    ...(payload.title ? { title: payload.title } : {}),
+    ...(payload.password ? { password: payload.password } : {}),
     ...(payload.to ? { to: payload.to } : {}),
     ...(payload.from ? { from: payload.from } : {}),
   };

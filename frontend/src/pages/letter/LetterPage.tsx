@@ -1,36 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/common/Header/Header";
 import styles from "./LetterPage.module.css";
 import LetterCard from "@/components/LetterPage/LetterCard";
 import Button from "@/components/common/button/Button";
 import { getMailboxLetters, Letter } from "@/apis/letter";
 
-const MOCK_LETTERS: Letter[] = [
-  {
-    id: "l3",
-    title: "비 오는 날의 안부",
-    body: "우산 챙겼지? ...",
-    date: "2025-01-03",
-  },
-  {
-    id: "l2",
-    title: "새해 다짐",
-    body: "올해는 더 자주 편지를 쓰자.",
-    date: "2025-01-02",
-  },
-  {
-    id: "l1",
-    title: "첫 편지",
-    body: "여기에 우리의 첫 기록을 남겨.",
-    date: "2025-01-01",
-  },
-];
-
 export default function LetterPage() {
   const { id: mailboxId } = useParams<{ id: string }>();
+  const location = useLocation();
   const nav = useNavigate();
   // TODO: id로 상세 불러오기
+
+  const navState = (location.state as any) || {};
+  const passwordFromNav: string | null = navState.password ?? null;
 
   const [letters, setLetters] = useState<Letter[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -47,6 +30,7 @@ export default function LetterPage() {
         const { items, nextCursor } = await getMailboxLetters({
           mailboxId,
           limit: 20,
+          password: passwordFromNav,
         });
         setLetters(items);
         setNextCursor(nextCursor);
@@ -57,7 +41,7 @@ export default function LetterPage() {
         setLoading(false);
       }
     })();
-  }, [mailboxId]);
+  }, [mailboxId, passwordFromNav]);
 
   const loadMore = async () => {
     if (!mailboxId || !nextCursor || loading) return;
@@ -67,6 +51,7 @@ export default function LetterPage() {
         mailboxId,
         limit: 20,
         cursor: nextCursor,
+        password: passwordFromNav,
       });
       setLetters((prev) => [...prev, ...items]);
       setNextCursor(nc);
@@ -119,7 +104,11 @@ export default function LetterPage() {
       <div className={styles.footer}>
         <Button
           className={styles.writeButton}
-          onClick={() => nav(`/letter/${mailboxId}/write`)}
+          onClick={() =>
+            nav(`/letter/${mailboxId}/write`, {
+              state: { password: passwordFromNav },
+            })
+          }
         >
           편지 쓰기
         </Button>
