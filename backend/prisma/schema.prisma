@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -13,18 +13,19 @@ enum MailboxType {
 }
 
 model User {
-  id        String      @id @default(cuid())
-  loginId   String    @unique  
-  email     String?   @unique
+  userID    String   @id @default(auto()) @map("_id") @db.ObjectId
+  id        String   @unique
   password  String
   name      String
   createdAt DateTime @default(now())
-  letters   Letter[]
-  mailboxes Mailbox[]
+
+  letters Letter[]
+  Mailbox Mailbox[]
 }
 
 model Mailbox {
-  id           Int         @id @default(autoincrement())
+  // PK는 MongoDB 규칙상 ObjectId 여야 함 (이름은 그대로 id 유지)
+  id           String      @id @default(auto()) @map("_id") @db.ObjectId
   name         String
   type         MailboxType
   passwordHash String?
@@ -34,23 +35,41 @@ model Mailbox {
   createdAt    DateTime    @default(now())
   letters      Letter[]
 
-  ownerId     String? 
-  owner        User?       @relation(fields: [ownerId], references: [id])
+  ownerId String?
+  // 관계는 대상 모델의 @id(User.userID)를 참조해야 함
+  owner   User?   @relation(fields: [ownerId], references: [userID])
 
   @@index([lat, lng])
   @@index([ownerId, createdAt])
 }
 
 model Letter {
-  id        Int      @id @default(autoincrement())
-  mailboxId Int
-  authorId  String?
+  // PK는 MongoDB 규칙상 ObjectId 여야 함 (이름은 그대로 id 유지)
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+
+  // FK 타입도 참조 PK와 동일하게 ObjectId로
+  mailboxId String  @db.ObjectId
+  authorId  String? @db.ObjectId
+
   title     String
   content   String
   createdAt DateTime @default(now())
 
   mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
-  author  User?   @relation(fields: [authorId], references: [id])
+  author  User?   @relation(fields: [authorId], references: [userID])
 
   @@index([mailboxId, createdAt])
+}
+
+model Saved {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  userId   String  @db.ObjectId
+  letterId String  @db.ObjectId
+
+  user     User    @relation(fields: [userId], references: [userID])
+  letter   Letter  @relation(fields: [letterId], references: [id])
+
+  @@unique([userId, letterId])
+  @@index([userId])
+  @@index([letterId])
 }

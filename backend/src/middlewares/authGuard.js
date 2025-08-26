@@ -1,18 +1,17 @@
 // src/middlewares/authGuard.js
-const { verify } = require("../utils/jwt");
+const jwt = require('jsonwebtoken');
 
-function authGuard(req, res, next) {
+module.exports = function authGuard(req, res, next) {
   const auth = req.headers.authorization;
-  if (!auth || !auth.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "인증 토큰이 필요합니다." });
-  }
-  const token = auth.split(" ")[1];
+  if (!auth) return res.status(401).json({ message: '토큰이 없습니다.' });
+
+  const token = auth.split(' ')[1];
   try {
-    const payload = verify(token); // { sub: userId } 형태라고 가정
-    req.user = { id: payload.sub };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Prisma User의 PK: userID(ObjectId 문자열)
+    req.userId = decoded.sub;
     next();
   } catch {
-    return res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+    res.status(401).json({ message: '유효하지 않은 토큰' });
   }
-}
-module.exports = authGuard; // ✅ 함수 export
+};

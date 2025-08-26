@@ -1,30 +1,26 @@
-const userRepo = require("../repositories/user.repo.js");
-const authService = require("../services/auth.service.js");
+const svc = require('../services/auth.service');
 
-exports.postSignup = async (req, res, next) => {
+async function signup(req, res, next) {
   try {
-    console.log("[signup] body:", req.body);
-    const result = await authService.signup(req.body);
-    return res.status(201).json(result);
-  } catch (err) {
-    next(err);
-  }
-};
+    const { id, name, password } = req.body;           // ← 반드시 password 포함
+    const result = await svc.signup({ id, name, password });
+    return res.status(201).json({ ...result, message: '회원가입 성공' });
+  } catch (e) { next(e); }
+}
 
-exports.postLogin = async (req, res, next) => {
+async function login(req, res, next) {
   try {
-    const result = await authService.login(req.body);
-    return res.json(result);
-  } catch (err) {
-    next(err);
-  }
-};
+    const { id, password } = req.body;
+    const result = await svc.login({ id, password });
+    return res.json({ ...result, message: '로그인 성공' });
+  } catch (e) { next(e); }
+}
 
-exports.me = async (req, res, next) => {
+async function me(req, res, next) {
   try {
-    // 더 이상 userRepo 조회 안 함
-    return res.json({ user: req.user });
-  } catch (err) {
-    next(err);
-  }
-};
+    const user = await svc.getMyProfile(req.userId);
+    return res.json({ user });
+  } catch (e) { next(e); }
+}
+
+module.exports = { signup, login, me };
