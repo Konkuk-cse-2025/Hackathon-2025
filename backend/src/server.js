@@ -7,7 +7,6 @@ const cors = require('cors');
 
 const app = express();
 
-<<<<<<< HEAD
 // 공통 미들웨어
 const corsOptions = {
   origin: "http://localhost:5173", // 클라이언트의 도메인
@@ -18,11 +17,6 @@ app.use(cors(corsOptions));
 //app.options('*', cors(corsOptions));
 
 app.use(express.json());
-=======
-// ====== 기본 설정/로그 ======
-console.log('NODE_ENV =', process.env.NODE_ENV || '(not set)');
-console.log('DATABASE_URL =', process.env.DATABASE_URL);
->>>>>>> origin/main
 
 // ====== 공통 미들웨어 ======
 app.use(cors());                              // 프론트 연동 시 필요
