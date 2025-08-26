@@ -22,7 +22,7 @@ export type Letterbox = {
 export default function MapPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [boxes, setBoxes] = useState<Letterbox[]>([]);
-  const [myLat, setMyLat] = useState<number | null>(null);   // ⬅ 추가
+  const [myLat, setMyLat] = useState<number | null>(null); // ⬅ 추가
   const [myLng, setMyLng] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -47,10 +47,10 @@ export default function MapPage() {
 
         const lat = pos.coords.latitude;
         const lng = pos.coords.longitude;
-        setMyLat(lat);                     // ⬅ 저장
-        setMyLng(lng); 
+        setMyLat(lat); // ⬅ 저장
+        setMyLng(lng);
         // 2) 위치와 반경을 쿼리로 전달 (반경은 예시 1000m)
-        const data = await fetchLetterboxes({ lat, lng, radius: 100000 });
+        const data = await fetchLetterboxes({ lat, lng, radius: 1000 });
 
         // 3) 서버 -> UI 매핑이 API 모듈에 있으면 그대로 set
         setBoxes(
@@ -67,7 +67,7 @@ export default function MapPage() {
         console.error(e);
         const lat = 37.5665;
         const lng = 126.978;
-        setMyLat(lat);                     // ⬅ 저장
+        setMyLat(lat); // ⬅ 저장
         setMyLng(lng);
         try {
           const fallback = await fetchLetterboxes({
@@ -150,7 +150,7 @@ export default function MapPage() {
         <NaverMap
           letterboxes={boxes}
           selectedId={selected}
-          onSelect={handleSelect}  // ⬅ 변경
+          onSelect={handleSelect} // ⬅ 변경
         />
 
         {selectedBox && (
@@ -159,7 +159,7 @@ export default function MapPage() {
               <SecretBox
                 boxName={selectedBox.name}
                 ownerName={selectedBox.ownerName}
-                onVerify={verifyPw}                 // ⬅ 비밀함은 여기서 서버검증
+                onVerify={verifyPw} // ⬅ 비밀함은 여기서 서버검증
                 onEnter={() => {
                   // verifyPw에서 true 받은 후 호출됨
                   setSelected(null);
@@ -183,7 +183,9 @@ export default function MapPage() {
             <NavLink to="/letterbox">
               <Button
                 fullWidth={false}
-                rightIcon={<img src="/icons/letter_make.png" alt="" aria-hidden="true" />}
+                rightIcon={
+                  <img src="/icons/letter_make.png" alt="" aria-hidden="true" />
+                }
               />
             </NavLink>
           </div>
