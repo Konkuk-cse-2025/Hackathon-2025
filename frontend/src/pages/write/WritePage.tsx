@@ -111,35 +111,52 @@ export default function WritePage() {
     return () => wrap.removeEventListener("scroll", onScroll);
   }, []);
 
+  const getCurrentPos = () =>
+    new Promise<GeolocationPosition>((resolve, reject) => {
+      if (!navigator.geolocation)
+        return reject(new Error("Geolocation 미지원"));
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 3000,
+      });
+    });
+
   /** 저장 API */
   const handleSave = async () => {
-    if (!mailboxId) {
-      alert("편지함 정보가 없습니다.");
-      return;
-    }
-    if (!title.trim()) {
-      alert("제목을 입력해주세요.");
-      return;
-    }
+    if (!mailboxId) return alert("편지함 정보가 없습니다.");
+    if (!title.trim()) return alert("제목을 입력해주세요.");
+
     try {
       setSaving(true);
-      const payload = {
+
+      // ★ 현재 위치 필수
+      const pos = await getCurrentPos();
+      const lat = +pos.coords.latitude.toFixed(6);
+      const lng = +pos.coords.longitude.toFixed(6);
+
+      await createLetter({
         mailboxId,
         title: title.trim(),
         to: to.trim() || undefined,
         from: from.trim() || undefined,
-        body: pages.join("\n\n---page-break---\n\n"), // 3페이지 합침
-      };
-      await createLetter(payload);
-      navigate(`/mailboxes/${mailboxId}`);
-    } catch (err) {
-      console.error("저장 실패:", err);
-      alert("저장에 실패했습니다.");
+        body: pages.join("\n\n---page-break---\n\n"),
+        lat, // ★ 포함
+        lng, // ★ 포함
+      });
+
+      navigate(`/letter/${mailboxId}`); // 라우트에 맞추어 이동
+    } catch (err: any) {
+      console.error(
+        "저장 실패:",
+        err?.response?.status,
+        err?.response?.data || err
+      );
+      alert(err?.response?.data?.message ?? "저장에 실패했습니다.");
     } finally {
       setSaving(false);
     }
   };
-
   /** 저장 버튼 (모든 페이지 공통) */
   const SaveButton = useMemo(
     () => (

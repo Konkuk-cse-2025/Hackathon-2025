@@ -17,7 +17,7 @@ const router = createBrowserRouter([
       { index: true, element: <SignupPage /> }, // 시작점: 로그인
       { path: "login", element: <LoginPage /> },
       { path: "map", element: <MapPage /> },
-      { path: "write", element: <WritePage /> },
+      { path: "letter/:id/write", element: <WritePage /> },
       { path: "letter/:id", element: <LetterPage /> },
       { path: "letter/:id/:letterId", element: <LetterDetailPage /> },
       { path: "mypage", element: <MyPage /> },
