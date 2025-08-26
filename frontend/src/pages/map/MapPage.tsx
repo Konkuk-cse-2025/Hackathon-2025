@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { fetchLetterboxes } from "@/apis/Letterboxes";
-
 import Header from "@/components/common/Header/Header";
 import Button from "@/components/common/button/Button";
 import NaverMap from "@/components/MapPage/NaverMap";
@@ -23,13 +22,13 @@ export type Letterbox = {
 export default function MapPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [boxes, setBoxes] = useState<Letterbox[]>([]);
+  const navigate = useNavigate();
 
   const selectedBox = useMemo(
     () => boxes.find((b) => b.id === selected) ?? null,
     [boxes, selected]
   );
 
-  const navigate = useNavigate();
   useEffect(() => {
     (async () => {
       try {
@@ -63,13 +62,25 @@ export default function MapPage() {
         );
       } catch (e) {
         console.error(e);
-        // 위치 권한 거부 시 기본 좌표(서울 시청 등)로 조회해도 OK
-        const fallback = await fetchLetterboxes({
-          lat: 37.5665,
-          lng: 126.978,
-          radius: 1000,
-        });
-        setBoxes(fallback);
+        try {
+          const fallback = await fetchLetterboxes({
+            lat: 37.5665,
+            lng: 126.978,
+            radius: 1000,
+          });
+          setBoxes(
+            fallback.map((it: any) => ({
+              id: String(it.id),
+              name: it.name,
+              ownerName: it.ownerName ?? it.owner?.name ?? "익명",
+              lat: it.lat,
+              lng: it.lng,
+              isSecret: it.isSecret,
+            }))
+          );
+        } catch (e2) {
+          console.error("fallback also failed", e2);
+        }
       }
     })();
   }, []);
@@ -82,7 +93,7 @@ export default function MapPage() {
 
   return (
     <div className={styles.page}>
-      <Header title="지도" />
+      <Header mode="imageOnly" imageSrc="/icons/Logo_write.png" alt="편지함" imageWidth={80} />
       <div className={styles.mapPlaceholder}>
         <NaverMap
           letterboxes={boxes}
@@ -115,22 +126,18 @@ export default function MapPage() {
             )}
           </Backdrop>
         )}
-        <div className={styles.cta}>
+        <div className={styles.ctaRight}>
           <div className={styles.actionsRight}>
             <NavLink to="/letterbox">
               <Button
                 fullWidth={false}
                 rightIcon={
-                  <img src="/icons/letterbox.png" alt="" aria-hidden="true" />
+                  <img src="/icons/letter_make.png" alt="" aria-hidden="true" />
                 }
-              ></Button>
+              />
             </NavLink>
-
-            <NavLink to="/write">
-              <Button>
-                  편지쓰기
-              </Button>
-            </NavLink>
+            
+            
           </div>
         </div>
 

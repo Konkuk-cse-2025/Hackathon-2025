@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 // backend/src/middlewares/authGuard.js
 const { verify } = require('../utils/jwt');
+=======
+// src/middlewares/authGuard.js
+const { verify } = require("../utils/jwt");
+>>>>>>> origin/main
 
 /**
  * Authorization: Bearer <token>
@@ -7,6 +12,7 @@ const { verify } = require('../utils/jwt');
  * B안(문자열 ID) 기준: req.user.id / req.user.userId 를 문자열로 저장.
  */
 function authGuard(req, res, next) {
+<<<<<<< HEAD
   const auth = req.headers.authorization || req.get('authorization');
 
   // 헤더 없음 or 형식 불일치
@@ -39,6 +45,19 @@ function authGuard(req, res, next) {
   } catch (err) {
     // 토큰 만료/검증 실패 등
     return res.status(401).json({ message: '유효하지 않은 토큰입니다.' });
+=======
+  const auth = req.headers.authorization;
+  if (!auth || !auth.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "인증 토큰이 필요합니다." });
+  }
+  const token = auth.split(" ")[1];
+  try {
+    const payload = verify(token); // { sub: userId } 형태라고 가정
+    req.user = { id: payload.sub };
+    next();
+  } catch {
+    return res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+>>>>>>> origin/main
   }
 }
 
