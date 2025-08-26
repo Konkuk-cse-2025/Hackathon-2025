@@ -24,6 +24,7 @@ export default function MapPage() {
   const [boxes, setBoxes] = useState<Letterbox[]>([]);
   const [myLat, setMyLat] = useState<number | null>(null); // ⬅ 추가
   const [myLng, setMyLng] = useState<number | null>(null);
+  const [verifiedPw, setVerifiedPw] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const selectedBox = useMemo(
@@ -105,6 +106,7 @@ export default function MapPage() {
         lng: myLng,
         password: pw,
       });
+      setVerifiedPw(pw);
       return true; // { ok: true }
     } catch (err: any) {
       if (err.status === 409) {
@@ -161,11 +163,21 @@ export default function MapPage() {
                 ownerName={selectedBox.ownerName}
                 onVerify={verifyPw} // ⬅ 비밀함은 여기서 서버검증
                 onEnter={() => {
-                  // verifyPw에서 true 받은 후 호출됨
+                  if (!verifiedPw) {
+                    alert("비밀번호 검증이 필요합니다.");
+                    return;
+                  }
+                  const pw = verifiedPw;
+                  setVerifiedPw(null);
                   setSelected(null);
-                  navigate(`/letter/${selectedBox.id}`); // ⬅ /letter/:id 로 이동
+                  navigate(`/letter/${selectedBox!.id}`, {
+                    state: { password: pw },
+                  }); // ⬅ /letter/:id 로 이동
                 }}
-                onClose={() => setSelected(null)}
+                onClose={() => {
+                  setVerifiedPw(null);
+                  setSelected(null);
+                }}
               />
             ) : (
               <PublicBox

@@ -6,7 +6,7 @@ import {
   ChangeEvent,
   KeyboardEvent,
 } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import Header from "@/components/common/Header/Header";
 import styles from "./WritePage.module.css";
@@ -17,6 +17,9 @@ const TOTAL_PAGES = 3;
 
 export default function WritePage() {
   const { id: mailboxId } = useParams<{ id: string }>();
+  const location = useLocation();
+  const passwordFromNav: string | null =
+    (location.state as any)?.password ?? null;
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -143,6 +146,7 @@ export default function WritePage() {
         body: pages.join("\n\n---page-break---\n\n"),
         lat, // ★ 포함
         lng, // ★ 포함
+        password: passwordFromNav || undefined,
       });
 
       navigate(`/letter/${mailboxId}`); // 라우트에 맞추어 이동
