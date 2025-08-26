@@ -47,7 +47,7 @@ export default function MapPage() {
         const lng = pos.coords.longitude;
 
         // 2) 위치와 반경을 쿼리로 전달 (반경은 예시 1000m)
-        const data = await fetchLetterboxes({ lat, lng, radius: 1000 });
+        const data = await fetchLetterboxes({ lat, lng, radius: 100000 });
 
         // 3) 서버 -> UI 매핑이 API 모듈에 있으면 그대로 set
         setBoxes(
@@ -93,7 +93,12 @@ export default function MapPage() {
 
   return (
     <div className={styles.page}>
-      <Header mode="imageOnly" imageSrc="/icons/Logo_write.png" alt="편지함" imageWidth={80} />
+      <Header
+        mode="imageOnly"
+        imageSrc="/icons/Logo_write.png"
+        alt="편지함"
+        imageWidth={80}
+      />
       <div className={styles.mapPlaceholder}>
         <NaverMap
           letterboxes={boxes}
@@ -136,8 +141,6 @@ export default function MapPage() {
                 }
               />
             </NavLink>
-            
-            
           </div>
         </div>
 
