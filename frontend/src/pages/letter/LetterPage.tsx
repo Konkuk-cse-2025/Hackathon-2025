@@ -6,27 +6,6 @@ import LetterCard from "@/components/LetterPage/LetterCard";
 import Button from "@/components/common/button/Button";
 import { getMailboxLetters, Letter } from "@/apis/letter";
 
-const MOCK_LETTERS: Letter[] = [
-  {
-    id: "l3",
-    title: "비 오는 날의 안부",
-    body: "우산 챙겼지? ...",
-    date: "2025-01-03",
-  },
-  {
-    id: "l2",
-    title: "새해 다짐",
-    body: "올해는 더 자주 편지를 쓰자.",
-    date: "2025-01-02",
-  },
-  {
-    id: "l1",
-    title: "첫 편지",
-    body: "여기에 우리의 첫 기록을 남겨.",
-    date: "2025-01-01",
-  },
-];
-
 export default function LetterPage() {
   const { id: mailboxId } = useParams<{ id: string }>();
   const nav = useNavigate();
@@ -100,7 +79,14 @@ export default function LetterPage() {
             <ul className={styles.list}>
               {sortedLetters.map((lt) => (
                 <li key={lt.id} className={styles.item}>
-                  <LetterCard title={lt.title} body={lt.body} date={lt.date} />
+                  <button
+                    type="button"
+                    className={styles.itemButton}
+                    onClick={() => nav(`/letter/${mailboxId}/${lt.id}`)}
+                    aria-label={`편지 상세 보기: ${lt.title}`}
+                  >
+                    <LetterCard title={lt.title} body={lt.body} date={lt.date} />
+                  </button>
                 </li>
               ))}
             </ul>
