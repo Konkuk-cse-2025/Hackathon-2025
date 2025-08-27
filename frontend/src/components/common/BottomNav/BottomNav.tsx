@@ -10,7 +10,7 @@ export default function BottomNav() {
           isActive ? styles.active : styles.inactive
         }
       >
-        지도
+        <img src="icons/map.svg" className={styles.icon} />
       </NavLink>
       <NavLink
         to="/mypage"
@@ -18,7 +18,7 @@ export default function BottomNav() {
           isActive ? styles.active : styles.inactive
         }
       >
-        마이
+        <img src="icons/profile.svg" className={styles.profileIcon} />
       </NavLink>
     </nav>
   );

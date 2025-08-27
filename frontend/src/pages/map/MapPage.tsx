@@ -51,7 +51,7 @@ export default function MapPage() {
         setMyLat(lat); // ⬅ 저장
         setMyLng(lng);
         // 2) 위치와 반경을 쿼리로 전달 (반경은 예시 1000m)
-        const data = await fetchLetterboxes({ lat, lng, radius: 1000 });
+        const data = await fetchLetterboxes({ lat, lng, radius: 10000 });
 
         // 3) 서버 -> UI 매핑이 API 모듈에 있으면 그대로 set
         setBoxes(

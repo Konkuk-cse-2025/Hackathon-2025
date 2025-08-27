@@ -2,8 +2,8 @@
   position: absolute; /* ✅ fixed → absolute */
   left: 0; /* 컨테이너의 왼/오/아래에 딱 붙이기 */
   right: 0;
-  bottom: 0;
-  height: 56px;
+  bottom: 0px;
+  height: 60px;
   display: flex;
   justify-content: space-around; /* 아이템 간격 균등 분배 */
 
@@ -21,4 +21,15 @@
 .inactive {
   font-weight: 700;
   color: rgb(58, 30, 9);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+}
+
+.profileIcon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 5px;
 }
