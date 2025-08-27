@@ -1,10 +1,10 @@
 :root {
-  --bg: #f6e7d8;            /* 연한 베이지 (배경) */
-  --surface: #f0d1d1;       /* 기본 카드 배경(핑크 톤) */
+  --bg: #f6e7d8; /* 연한 베이지 (배경) */
+  --surface: #f0d1d1; /* 기본 카드 배경(핑크 톤) */
   --surface-green: #cfdfcf; /* 그린 카드 배경 */
-  --brown: #8a6851;         /* 선/텍스트 */
-  --header-bg: #8a6851;     /* 헤더 갈색 박스 */
-  --header-text: #f5e6c8;   /* 헤더 글자(연한 베이지) */
+  --brown: #8a6851; /* 선/텍스트 */
+  --header-bg: #8a6851; /* 헤더 갈색 박스 */
+  --header-text: #f5e6c8; /* 헤더 글자(연한 베이지) */
   --radius-xl: 16px;
   --radius-card: 14px;
   --shadow-soft: 0 2px 0 rgba(138, 104, 81, 0.15);
@@ -16,7 +16,8 @@
   background: var(--bg);
   margin: 0;
   padding: 0;
-  font-family: "Poor Story", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-family: "Poor Story", system-ui, -apple-system, Segoe UI, Roboto,
+    sans-serif;
   color: var(--brown);
 }
 
@@ -30,7 +31,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 56px;                 /* 상단 갈색 박스 높이 */
+  height: 56px; /* 상단 갈색 박스 높이 */
   box-shadow: var(--shadow-soft);
 }
 
@@ -38,7 +39,7 @@
 .header::after {
   content: "";
   position: absolute;
-  bottom: -30px;                /* 플랩이 본문으로 내려오게 */
+  bottom: -30px; /* 플랩이 본문으로 내려오게 */
   left: 50%;
   transform: translateX(-50%);
   width: 0;
@@ -60,11 +61,13 @@
    메인 & 카드
    ========================= */
 .main {
+  flex: 1;
   display: grid;
   gap: 28px;
   padding: 48px 18px 24px; /* 플랩 아래 여백 확보 */
   max-width: 720px;
   margin: 0 auto;
+  overflow-y: auto;
 }
 
 .card {
@@ -90,8 +93,12 @@
 }
 
 /* 카드 색 변형 */
-.pink { background: #efc3c6; }     /* 이미지 느낌에 더 가까운 핑크 */
-.green { background: var(--surface-green); }
+.pink {
+  background: #efc3c6;
+} /* 이미지 느낌에 더 가까운 핑크 */
+.green {
+  background: var(--surface-green);
+}
 
 /* 카드 타이틀 */
 .cardTitle {
@@ -121,14 +128,37 @@
 }
 
 .cardBody {
+  max-width: 330px;
+  max-height: 200px;
   min-height: 84px; /* 콘텐츠 들어갈 공간 확보 (목록/링크 등) */
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.cardBody::-webkit-scrollbar {
+  width: 3px; /* 얇은 스크롤바 */
+}
+.cardBody::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+.cardBody::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* =========================
    접근성 & 반응형
    ========================= */
 @media (min-width: 480px) {
-  .headerInner { font-size: 24px; }
-  .cardTitle { font-size: 21px; }
-  .inlineIcon, .inlineImg { width: 24px; height: 24px; }
+  .headerInner {
+    font-size: 24px;
+  }
+  .cardTitle {
+    font-size: 21px;
+  }
+  .inlineIcon,
+  .inlineImg {
+    width: 24px;
+    height: 24px;
+  }
 }

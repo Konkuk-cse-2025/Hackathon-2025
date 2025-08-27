@@ -46,7 +46,7 @@
   cursor: pointer;
   display: block;
   width: 100%;
-  background: #FAF0D7;
+  background: #faf0d7;
   border: 1px solid #d6a572;
   border-radius: 12px;
   padding: 16px;
@@ -80,3 +80,8 @@
   text-align: right;
 }
 
+.list {
+  max-height: 900px;
+  overflow-y: auto;
+  padding-right: 8px;
+}

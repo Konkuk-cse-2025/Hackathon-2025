@@ -1,5 +1,5 @@
 // src/services/me.service.js
-const prisma = require('../config/prisma');
+const prisma = require("../config/prisma");
 
 /**
  * 공통: 페이지네이션 유틸 (커서 기반)
@@ -7,7 +7,7 @@ const prisma = require('../config/prisma');
  */
 function buildPagination({ limit, cursor }) {
   const take = Math.min(Math.max(Number(limit) || 20, 1), 50); // 1~50
-  const whereCursor = cursor ? { id: cursor } : undefined;     // Prisma Mongo: id(String @db.ObjectId)
+  const whereCursor = cursor ? { id: cursor } : undefined; // Prisma Mongo: id(String @db.ObjectId)
   return { take, whereCursor };
 }
 
@@ -16,7 +16,9 @@ function buildPagination({ limit, cursor }) {
  * - savedCount는 현재 스키마엔 저장관계가 없어 0으로 반환
  */
 async function getSummary(userId) {
-  const lettersCount = await prisma.letter.count({ where: { authorId: userId } });
+  const lettersCount = await prisma.letter.count({
+    where: { authorId: userId },
+  });
   const savedCount = 0; // TODO: 스키마에 Saved(또는 Letter.savers) 추가 시 실제 카운트로 교체
   return { lettersCount, savedCount };
 }
@@ -28,7 +30,7 @@ async function getMyLetters(userId, { limit, cursor }) {
   const { take, whereCursor } = buildPagination({ limit, cursor });
   const items = await prisma.letter.findMany({
     where: { authorId: userId },
-    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     ...(whereCursor && { cursor: whereCursor, skip: 1 }),
     take,
     select: {
