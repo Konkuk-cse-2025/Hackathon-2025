@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Header from "@/components/common/Header/Header";
 import styles from "./LetterPage.module.css";
 import LetterCard from "@/components/LetterPage/LetterCard";
@@ -8,8 +8,12 @@ import { getMailboxLetters, Letter } from "@/apis/letter";
 
 export default function LetterPage() {
   const { id: mailboxId } = useParams<{ id: string }>();
+  const location = useLocation();
   const nav = useNavigate();
   // TODO: id로 상세 불러오기
+
+  const navState = (location.state as any) || {};
+  const passwordFromNav: string | null = navState.password ?? null;
 
   const [letters, setLetters] = useState<Letter[]>([]);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
@@ -26,6 +30,7 @@ export default function LetterPage() {
         const { items, nextCursor } = await getMailboxLetters({
           mailboxId,
           limit: 20,
+          password: passwordFromNav,
         });
         setLetters(items);
         setNextCursor(nextCursor);
@@ -36,7 +41,7 @@ export default function LetterPage() {
         setLoading(false);
       }
     })();
-  }, [mailboxId]);
+  }, [mailboxId, passwordFromNav]);
 
   const loadMore = async () => {
     if (!mailboxId || !nextCursor || loading) return;
@@ -46,6 +51,7 @@ export default function LetterPage() {
         mailboxId,
         limit: 20,
         cursor: nextCursor,
+        password: passwordFromNav,
       });
       setLetters((prev) => [...prev, ...items]);
       setNextCursor(nc);
@@ -105,11 +111,15 @@ export default function LetterPage() {
       <div className={styles.footer}>
         <Button
           className={styles.writeButton}
-          onClick={() => nav(`/letter/${mailboxId}/write`)}
+          onClick={() =>
+            nav(`/letter/${mailboxId}/write`, {
+              state: { password: passwordFromNav },
+            })
+          }
         >
           편지 쓰기
         </Button>
-        <Button className={styles.exitButton} onClick={() => nav(-1)}>
+        <Button className={styles.exitButton} onClick={() => nav(`/map`)}>
           편지함 나가기
         </Button>
       </div>

@@ -35,7 +35,9 @@ export default function PublicBox({
       </div>
 
       <div className={styles.actionsRow}>
-        <Button onClick={onEnter}>편지함 열기</Button>
+        <Button onClick={onEnter} style={{ backgroundColor: "#8a6851" }}>
+          편지함 열기
+        </Button>
       </div>
     </Card>
   );

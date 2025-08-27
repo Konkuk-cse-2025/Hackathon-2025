@@ -5,7 +5,7 @@
 
 .mapPlaceholder {
   position: relative;
-  height: 730px; /* 헤더+바텀네브 높이에 맞게 조정 */
+  height: 745px; /* 헤더+바텀네브 높이에 맞게 조정 */
   overflow: hidden;
   z-index: 0;
 }
@@ -23,13 +23,12 @@
 /* 👉 오른쪽 고정 버전 */
 .ctaRight {
   position: absolute;
-  right: 16px;     /* 오른쪽 여백 */
+  right: 16px; /* 오른쪽 여백 */
   bottom: 96px;
   z-index: 1000;
   pointer-events: auto;
   transform: none; /* 중요: 가운데로 당기는 변환 제거 */
 }
-
 
 .actionsRight {
   display: flex;

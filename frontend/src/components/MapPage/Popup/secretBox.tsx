@@ -77,6 +77,7 @@ export default function SecretBox({
           className={styles.inlineBtn}
           onClick={handleVerify}
           disabled={loading}
+          style={{ backgroundColor: "#8a6851" }}
         >
           {loading ? "확인중..." : "확인"}
         </Button>
@@ -99,7 +100,9 @@ export default function SecretBox({
       </div>
 
       <div className={styles.actionsRow}>
-        <Button onClick={onEnter}>편지함 열기</Button>
+        <Button onClick={onEnter} style={{ backgroundColor: "#8a6851" }}>
+          편지함 열기
+        </Button>
       </div>
     </Card>
   );
