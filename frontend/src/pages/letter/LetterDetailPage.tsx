@@ -114,16 +114,16 @@ export default function LetterDetailPage() {
   const onToggleSave = async () => {
     if (lid == null || busy) return;
     setBusy(true);
-    const next = !saved; // (실제로는 낙관적 업데이트입니다)
-    setSaved(next);
+    const nextSavedState = !saved; // (실제로는 낙관적 업데이트입니다)
+    setSaved(nextSavedState);
+
     try {
-      if (next) {
+      if (nextSavedState) {
         await bookmarkLetter(lid);
-        nav("/mypage", { state: { justSaved: lid } });
       }
     } catch (e) {
       console.error("toggle failed", e);
-      setSaved(!next); // 실패 시 롤백
+      setSaved(!nextSavedState); // 실패 시 롤백
     } finally {
       setBusy(false);
     }

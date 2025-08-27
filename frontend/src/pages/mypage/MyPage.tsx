@@ -65,14 +65,16 @@ export default function MyPage() {
           </h2>
           {/* 콘텐츠 영역: 리스트/링크가 들어갈 자리 */}
           <div className={styles.cardBody}>
-            {myLetters.map((lt) => (
-              <LetterCard
-                key={lt.id}
-                title={lt.title}
-                body={lt.content}
-                date={new Date(lt.createdAt).toLocaleDateString()}
-              />
-            ))}
+            {myLetters
+              .filter((lt) => lt.id)
+              .map((lt) => (
+                <LetterCard
+                  key={lt.id}
+                  title={lt.title}
+                  body={lt.content}
+                  date={new Date(lt.createdAt).toLocaleDateString()}
+                />
+              ))}
           </div>
         </section>
 
@@ -92,14 +94,16 @@ export default function MyPage() {
           </h2>
           <div className={styles.cardBody}>
             {" "}
-            {savedLetters.map((lt) => (
-              <LetterCard
-                key={lt.id}
-                title={lt.title}
-                body={lt.content}
-                date={new Date(lt.createdAt).toLocaleDateString()}
-              />
-            ))}
+            {savedLetters
+              .filter((lt) => lt.id)
+              .map((lt) => (
+                <LetterCard
+                  key={lt.id}
+                  title={lt.title}
+                  body={lt.content}
+                  date={new Date(lt.createdAt).toLocaleDateString()}
+                />
+              ))}
           </div>
         </section>
       </main>

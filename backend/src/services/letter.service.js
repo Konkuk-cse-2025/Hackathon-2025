@@ -91,15 +91,6 @@ async function bookmark({ userId, letterId }) {
   return { created: !already, saved };
 }
 
-// DELETE /letters/:id/bookmark
-async function unbookmark({ userId, letterId }) {
-  const id = await ensureLetterExists(letterId);
-  const already = await savedRepo.exists({ userId, letterId: id });
-  if (!already) return { deleted: false }; // 멱등성 보장
-  await savedRepo.remove({ userId, letterId: id });
-  return { deleted: true };
-}
-
 async function isBookmarked({ userId, letterId }) {
   // letterId 유효성 검사
   const id = await ensureLetterExists(letterId);
@@ -108,6 +99,15 @@ async function isBookmarked({ userId, letterId }) {
   const saved = await savedRepo.exists({ userId, letterId: id });
 
   return saved;
+}
+
+// DELETE /letters/:id/bookmark
+async function unbookmark({ userId, letterId }) {
+  const id = await ensureLetterExists(letterId);
+  const already = await savedRepo.exists({ userId, letterId: id });
+  if (!already) return { deleted: false }; // 멱등성 보장
+  await savedRepo.remove({ userId, letterId: id });
+  return { deleted: true };
 }
 
 module.exports = {
