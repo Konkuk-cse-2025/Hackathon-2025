@@ -13,18 +13,19 @@ enum MailboxType {
 }
 
 model User {
-  userID    String   @id @default(cuid())
-  id        String   @unique
+  id        String   @id @default(cuid())
+  loginId   String   @unique
   password  String
   name      String
   createdAt DateTime @default(now())
 
   letters Letter[]
-  Mailbox Mailbox[]
+  mailboxes Mailbox[]
+  savedLetters SavedLetter[]
 }
 
 model Mailbox {
-  id           String      @id @default(cuid())
+  id           Int      @id @default(autoincrement())
   name         String
   type         MailboxType
   passwordHash String?
@@ -35,7 +36,7 @@ model Mailbox {
 
   // 관계
   ownerId String?
-  owner   User?    @relation(fields: [ownerId], references: [userID])
+  owner   User?    @relation(fields: [ownerId], references: [id])
   letters Letter[]
 
   @@index([lat, lng])
@@ -43,19 +44,33 @@ model Mailbox {
 }
 
 model Letter {
-  id String @id @default(cuid())
+  id Int @id @default(autoincrement())
 
   // FK
-  mailboxId String
+  mailboxId Int
   authorId  String?
 
   title     String
   content   String
+  savedBy   SavedLetter[]
   createdAt DateTime @default(now())
 
   // 관계
   mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
-  author  User?   @relation(fields: [authorId], references: [userID])
+  author  User?   @relation(fields: [authorId], references: [id])
 
   @@index([mailboxId, createdAt])
+}
+
+model SavedLetter {
+id        Int      @id @default(autoincrement())
+userId    String
+letterId  Int
+createdAt DateTime @default(now())
+
+user   User   @relation(fields: [userId], references: [id])
+letter Letter @relation(fields: [letterId], references: [id])
+
+@@unique([userId, letterId], name: "userId_letterId_unique")
+@@index([userId, createdAt])
 }
