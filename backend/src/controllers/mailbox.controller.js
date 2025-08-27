@@ -7,7 +7,7 @@ function isFiniteInRange(n, min, max) {
 const create = async (req, res, next) => {
   try {
     const { name, type, lat, lng, password, passwordHint } = req.body;
-    const ownerId = req.user?.id ?? null;
+    const ownerId = req.userId || req.user?.sub || req.user?.id || null;
 
     console.log("Received ownerId:", ownerId);
     if (!ownerId) return res.status(401).json({ error: "인증 필요" });
