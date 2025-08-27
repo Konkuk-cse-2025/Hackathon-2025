@@ -97,7 +97,7 @@ export default function LetterDetailPage() {
         if (mounted) setSaved(saved);
       } catch (e: any) {
         if (!mounted) return;
-        setInitErr(e?.response?.status === 401 ? "로그인이 필요해요" : "상태를 불러오지 못했습니다");
+        setInitErr(e?.response?.status === 401 ? " " : "상태를 불러오지 못했습니다");
         console.error("getBookmarkState failed", e);
       }
     })();
