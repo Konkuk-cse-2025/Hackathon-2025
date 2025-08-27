@@ -35,10 +35,11 @@ const create = async (req, res, next) => {
     }
 
     // 거리 + (SECRET이면) 비번 즉시 검증
-    await mailboxSvc.requireAccessSimple({
+    await mailboxSvc.requireAccess({
+      req,
       mailboxId,
-      userLat: lat,
-      userLng: lng,
+      userLat: Number(lat),
+      userLng: Number(lng),
       password,
     });
 
@@ -67,10 +68,11 @@ const listInMailbox = async (req, res, next) => {
       throw e;
     }
 
-    await mailboxSvc.requireAccessSimple({
-      mailboxId: id,
-      userLat: lat,
-      userLng: lng,
+    await mailboxSvc.requireAccess({
+      req,
+      mailboxId: Number(id),
+      userLat: Number(lat),
+      userLng: Number(lng),
       password,
     });
 
@@ -118,10 +120,11 @@ const getOne = async (req, res, next) => {
       throw e;
     }
 
-    await mailboxSvc.requireAccessSimple({
+    await mailboxSvc.requireAccess({
       mailboxId: letter.mailboxId,
-      userLat: lat,
-      userLng: lng,
+      req,
+      userLat: Number(lat),
+      userLng: Number(lng),
       password,
     });
 

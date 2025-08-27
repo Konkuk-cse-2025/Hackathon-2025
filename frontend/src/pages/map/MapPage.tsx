@@ -114,7 +114,7 @@ export default function MapPage() {
         return false;
       }
       if (err.status === 401 || err.status === 403) {
-        alert("100m 이내에서만 열 수 있어요.");
+        alert(" 100m 이내에서만 열 수 있어요.");
         return false;
       }
       alert("열람 검증 중 문제가 발생했어요.");
@@ -133,7 +133,7 @@ export default function MapPage() {
       navigate(`/letter/${boxId}`);
     } catch (err: any) {
       if (err.status === 401 || err.status === 403) {
-        alert("100m 이내에서만 열 수 있어요.");
+        alert(" 100m 이내에서만 열 수 있어요.");
       } else {
         alert("열람 검증 중 문제가 발생했어요.");
       }
