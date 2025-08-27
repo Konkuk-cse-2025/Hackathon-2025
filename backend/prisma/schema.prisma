@@ -3,8 +3,8 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL") // 예: file:./dev.db
 }
 
 enum MailboxType {
@@ -13,7 +13,7 @@ enum MailboxType {
 }
 
 model User {
-  userID    String   @id @default(auto()) @map("_id") @db.ObjectId
+  userID    String   @id @default(cuid())
   id        String   @unique
   password  String
   name      String
@@ -24,8 +24,7 @@ model User {
 }
 
 model Mailbox {
-  // PK는 MongoDB 규칙상 ObjectId 여야 함 (이름은 그대로 id 유지)
-  id           String      @id @default(auto()) @map("_id") @db.ObjectId
+  id           String      @id @default(cuid())
   name         String
   type         MailboxType
   passwordHash String?
@@ -33,43 +32,30 @@ model Mailbox {
   lat          Float
   lng          Float
   createdAt    DateTime    @default(now())
-  letters      Letter[]
 
+  // 관계
   ownerId String?
-  // 관계는 대상 모델의 @id(User.userID)를 참조해야 함
-  owner   User?   @relation(fields: [ownerId], references: [userID])
+  owner   User?    @relation(fields: [ownerId], references: [userID])
+  letters Letter[]
 
   @@index([lat, lng])
   @@index([ownerId, createdAt])
 }
 
 model Letter {
-  // PK는 MongoDB 규칙상 ObjectId 여야 함 (이름은 그대로 id 유지)
-  id String @id @default(auto()) @map("_id") @db.ObjectId
+  id String @id @default(cuid())
 
-  // FK 타입도 참조 PK와 동일하게 ObjectId로
-  mailboxId String  @db.ObjectId
-  authorId  String? @db.ObjectId
+  // FK
+  mailboxId String
+  authorId  String?
 
   title     String
   content   String
   createdAt DateTime @default(now())
 
+  // 관계
   mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
   author  User?   @relation(fields: [authorId], references: [userID])
 
   @@index([mailboxId, createdAt])
-}
-
-model Saved {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId   String  @db.ObjectId
-  letterId String  @db.ObjectId
-
-  user     User    @relation(fields: [userId], references: [userID])
-  letter   Letter  @relation(fields: [letterId], references: [id])
-
-  @@unique([userId, letterId])
-  @@index([userId])
-  @@index([letterId])
 }

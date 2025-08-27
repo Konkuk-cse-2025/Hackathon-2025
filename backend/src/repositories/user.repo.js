@@ -1,5 +1,5 @@
-const prisma = require('../config/prisma');
-const bcrypt = require('bcryptjs');
+// src/repositories/user.repo.js
+const prisma = require('../config/prisma'); // 너가 쓰는 경로 그대로
 
 async function isIdTaken(id) {
   const found = await prisma.user.findUnique({
@@ -24,7 +24,7 @@ async function findByIdWithPassword(id) {
 }
 
 async function create({ id, name, password }) {
-  // 여기까지 내려왔을 때 undefined면 서비스에서 잘못 넘긴 것
+  // 서비스에서 이미 해시 처리했다는 전제(해시 안돼서 오면 에러)
   if (typeof password !== 'string' || password.length === 0) {
     const e = new Error('회원가입에 필요한 비밀번호가 없습니다.');
     e.status = 400;
@@ -36,9 +36,8 @@ async function create({ id, name, password }) {
     throw e;
   }
 
-  const hashed = await bcrypt.hash(password, 10);
   return prisma.user.create({
-    data: { id, name, password: hashed },
+    data: { id, name, password }, // <- 해시된 비번 그대로 저장
     select: { userID: true, id: true, name: true },
   });
 }
@@ -50,8 +49,7 @@ async function findByUserObjectId(userID) {
   });
 }
 
-console.log('[repo.create args]', { id, name, hasPassword: typeof password === 'string' });
-
+// 🚫 함수 바깥에서 id/name/password 같은 식별자 참조 금지 (ReferenceError 방지)
 module.exports = {
   isIdTaken,
   findByIdField,

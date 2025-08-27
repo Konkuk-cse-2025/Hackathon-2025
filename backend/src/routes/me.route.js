@@ -5,6 +5,8 @@ const router = express.Router();
 const meCtrl = require('../controllers/me.controller');
 const authGuard = require('../middlewares/authGuard'); // JWT → req.userId
 
+router.get('/', authGuard, meCtrl.profile);
+
 // 마이페이지 진입 시: 버튼 숫자만 필요
 router.get('/summary', authGuard, meCtrl.summary);
 

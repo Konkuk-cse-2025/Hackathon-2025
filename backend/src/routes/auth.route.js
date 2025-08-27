@@ -1,13 +1,10 @@
 const express = require('express');
+const ctrl = require('../controllers/auth.controller');
+
 const router = express.Router();
 
-const authCtrl = require('../controllers/auth.controller');
-const authGuard = require('../middlewares/authGuard');
-
-router.post('/signup', authCtrl.postSignup);
-router.post('/login', authCtrl.postLogin);
-
-// 보호 라우트
-router.get('/me', authGuard, authCtrl.me);
+router.post('/signup', ctrl.signup);
+router.post('/login', ctrl.login);
+router.get('/me', require('../middlewares/authGuard'), ctrl.me);
 
 module.exports = router;
