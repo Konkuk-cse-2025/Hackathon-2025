@@ -11,7 +11,16 @@ if (!process.env.RAILWAY_ENVIRONMENT_NAME && process.env.NODE_ENV !== 'productio
 const app = express();
 app.set('trust proxy', 1);
 
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // 정확한 오리진
+    credentials: true, // Allow-Credentials를 true로 설정
+  })
+);
+
 const prisma = new PrismaClient();
+
 
 // ====== CORS 설정 ======
 const allowedOrigins = [

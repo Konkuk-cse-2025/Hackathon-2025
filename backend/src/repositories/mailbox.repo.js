@@ -48,8 +48,14 @@ async function findInBounds(bounds) {
 }
 
 async function findById(id) {
+  if (!id || !Number.isFinite(Number(id))) {
+    throw new Error("유효하지 않은 ID가 전달되었습니다."); // id 유효성 검사 추가
+  }
+
   return prisma.mailbox.findUnique({
-    where: { id: Number(id) },
+    where: {
+      id: Number(id), // id를 Int로 변환
+    },
     select: {
       id: true,
       name: true,

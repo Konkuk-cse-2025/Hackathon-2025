@@ -24,7 +24,9 @@ async function findByMailbox(mailboxId, limit, offset) {
 }
 
 async function findByIdWithMailbox(id) {
-  return prisma.letter.findUnique({
+  console.log("Fetching letter with mailbox details for ID:", id); // 디버깅 로그 추가
+
+  const letter = await prisma.letter.findUnique({
     where: { id: Number(id) },
     select: {
       id: true,
@@ -36,6 +38,10 @@ async function findByIdWithMailbox(id) {
       mailbox: { select: { id: true, type: true, lat: true, lng: true, passwordHash: true } }
     }
   });
+
+  console.log("Fetched letter with mailbox details:", letter); // 가져온 데이터 확인
+
+  return letter;
 }
 
 module.exports = { create, findByMailbox, findByIdWithMailbox };

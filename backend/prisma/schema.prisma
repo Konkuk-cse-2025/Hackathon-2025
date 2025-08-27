@@ -13,6 +13,7 @@ enum MailboxType {
 }
 
 model User {
+
   id        String   @id @default(cuid())
   loginId   String   @unique
   password  String
@@ -44,9 +45,10 @@ model Mailbox {
 }
 
 model Letter {
+
   id Int @id @default(autoincrement())
 
-  // FK
+  
   mailboxId Int
   authorId  String?
 

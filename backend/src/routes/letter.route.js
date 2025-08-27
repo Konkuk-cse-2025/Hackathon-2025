@@ -15,5 +15,6 @@ router.get('/:id', controller.getOne);          // GET  /letters/:id
 // ✅ 북마크 추가/삭제 (server.js에서 '/letters'로 마운트됨)
 router.post('/:id/bookmark', authGuard, controller.bookmark);    // POST   /letters/:id/bookmark
 router.delete('/:id/bookmark', authGuard, controller.unbookmark); // DELETE /letters/:id/bookmark
+router.get('/:id/bookmark', authGuard, controller.isBookmarked);
 
 module.exports = router;
