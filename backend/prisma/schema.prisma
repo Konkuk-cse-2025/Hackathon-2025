@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL") // 예: file:./dev.db
 }
 
 enum MailboxType {
@@ -13,14 +13,14 @@ enum MailboxType {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  loginId   String    @unique
-  email     String?   @unique
+  id        String   @id @default(cuid())
+  loginId   String   @unique
   password  String
   name      String
-  createdAt DateTime  @default(now())
-  letters   Letter[]
-  mailboxes Mailbox[]
+  createdAt DateTime @default(now())
+
+  letters      Letter[]
+  mailboxes    Mailbox[]
   savedLetters SavedLetter[]
 }
 
@@ -33,24 +33,29 @@ model Mailbox {
   lat          Float
   lng          Float
   createdAt    DateTime    @default(now())
-  letters      Letter[]
 
+  // 관계
   ownerId String?
-  owner   User?   @relation(fields: [ownerId], references: [id])
+  owner   User?    @relation(fields: [ownerId], references: [id])
+  letters Letter[]
 
   @@index([lat, lng])
   @@index([ownerId, createdAt])
 }
 
 model Letter {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
+  // FK
   mailboxId Int
   authorId  String?
+
   title     String
   content   String
   savedBy   SavedLetter[]
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
 
+  // 관계
   mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
   author  User?   @relation(fields: [authorId], references: [id])
 
