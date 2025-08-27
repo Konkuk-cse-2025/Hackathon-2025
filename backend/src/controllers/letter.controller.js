@@ -1,11 +1,15 @@
 // src/controllers/letter.controller.js
-const svc = require('../services/letter.service');
-const mailboxSvc = require('../services/mailbox.service');
+const svc = require("../services/letter.service");
+const mailboxSvc = require("../services/mailbox.service");
 
 // 공통: 현재 로그인 유저ID 문자열로 얻기 (없으면 빈 문자열)
 function getUserId(req) {
-  const raw = req.user?.userId ?? req.user?.id ?? '';
-  return raw ? String(raw) : '';
+  const raw =
+    req.userId ?? // ✅ authGuard
+    req.user?.id ?? // 혹시 다른 미들웨어
+    req.user?.userId ??
+    ""; // 혹시 다른 미들웨어
+  return raw ? String(raw) : "";
 }
 
 // --------------------
@@ -15,10 +19,17 @@ const create = async (req, res, next) => {
   try {
     const { mailboxId, title, content, lat, lng, password } = req.body;
 
-    console.log("Creating letter with data:", { mailboxId, title, content, lat, lng, password });
+    console.log("Creating letter with data:", {
+      mailboxId,
+      title,
+      content,
+      lat,
+      lng,
+      password,
+    });
 
     if (lat == null || lng == null) {
-      const e = new Error('현재 위치(lat,lng)가 필요합니다.');
+      const e = new Error("현재 위치(lat,lng)가 필요합니다.");
       e.status = 400;
       throw e;
     }
@@ -51,7 +62,7 @@ const listInMailbox = async (req, res, next) => {
     const { lat, lng, password, limit, offset } = req.query;
 
     if (lat == null || lng == null) {
-      const e = new Error('현재 위치(lat,lng)가 필요합니다.');
+      const e = new Error("현재 위치(lat,lng)가 필요합니다.");
       e.status = 400;
       throw e;
     }
@@ -139,7 +150,7 @@ const bookmark = async (req, res, next) => {
   try {
     const userId = getUserId(req);
     if (!userId) {
-      const e = new Error('로그인이 필요합니다.');
+      const e = new Error("로그인이 필요합니다.");
       e.status = 401;
       throw e;
     }
@@ -150,7 +161,7 @@ const bookmark = async (req, res, next) => {
 
     return res.status(created ? 201 : 200).json({
       ok: true,
-      message: created ? '북마크 완료' : '이미 북마크 되어 있습니다',
+      message: created ? "북마크 완료" : "이미 북마크 되어 있습니다",
       savedLetterId: saved.id,
     });
   } catch (err) {
@@ -163,7 +174,7 @@ const unbookmark = async (req, res, next) => {
   try {
     const userId = getUserId(req);
     if (!userId) {
-      const e = new Error('로그인이 필요합니다.');
+      const e = new Error("로그인이 필요합니다.");
       e.status = 401;
       throw e;
     }
@@ -181,7 +192,7 @@ const isBookmarked = async (req, res, next) => {
   try {
     const userId = getUserId(req);
     if (!userId) {
-      const e = new Error('로그인이 필요합니다.');
+      const e = new Error("로그인이 필요합니다.");
       e.status = 401;
       throw e;
     }
@@ -199,5 +210,5 @@ module.exports = {
   getOne,
   bookmark,
   unbookmark,
-  isBookmarked,   // ← 추가
+  isBookmarked, // ← 추가
 };

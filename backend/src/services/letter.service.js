@@ -1,24 +1,23 @@
 // backend/src/services/letter.service.js
 
 // 기존 의존성 (유지)
-const letterRepo = require('../repositories/letter.repo');
-const mailboxRepo = require('../repositories/mailbox.repo');
+const letterRepo = require("../repositories/letter.repo");
+const mailboxRepo = require("../repositories/mailbox.repo");
 
 // ✅ 추가: DB 직접 확인용
-const prisma = require('../../prisma/client');
+const prisma = require("../../prisma/client");
 // ✅ 추가: SavedLetter 전용 Repo
-const savedRepo = require('../repositories/savedLetter.repo');
-
+const savedRepo = require("../repositories/savedLetter.repo");
 
 async function create({ mailboxId, authorId, title, content }) {
   if (!mailboxId || !title || !content) {
-    const e = new Error('mailboxId,title,content 필요');
+    const e = new Error("mailboxId,title,content 필요");
     e.status = 400;
     throw e;
   }
   const mb = await mailboxRepo.findById(mailboxId);
   if (!mb) {
-    const e = new Error('편지함 없음');
+    const e = new Error("편지함 없음");
     e.status = 404;
     throw e;
   }
@@ -31,7 +30,11 @@ async function create({ mailboxId, authorId, title, content }) {
 }
 
 const listInMailbox = (mailboxId, p = {}) =>
-  letterRepo.findByMailbox(mailboxId, Number(p.limit || 50), Number(p.offset || 0));
+  letterRepo.findByMailbox(
+    mailboxId,
+    Number(p.limit || 50),
+    Number(p.offset || 0)
+  );
 
 async function getById(id) {
   console.log("Fetching letter with ID:", id);
@@ -67,13 +70,13 @@ async function getById(id) {
 async function ensureLetterExists(letterId) {
   const id = Number(letterId);
   if (!Number.isFinite(id)) {
-    const e = new Error('잘못된 편지 ID 입니다.');
+    const e = new Error("잘못된 편지 ID 입니다.");
     e.status = 400;
     throw e;
   }
   const letter = await prisma.letter.findUnique({ where: { id } });
   if (!letter) {
-    const e = new Error('편지를 찾을 수 없습니다.');
+    const e = new Error("편지를 찾을 수 없습니다.");
     e.status = 404;
     throw e;
   }
@@ -88,12 +91,30 @@ async function bookmark({ userId, letterId }) {
   return { created: !already, saved };
 }
 
+async function isBookmarked({ userId, letterId }) {
+  // letterId 유효성 검사
+  const id = await ensureLetterExists(letterId);
+
+  // 해당 편지가 특정 사용자에 의해 북마크되었는지 확인
+  const saved = await savedRepo.exists({ userId, letterId: id });
+
+  return saved;
+}
+
 // DELETE /letters/:id/bookmark
 async function unbookmark({ userId, letterId }) {
   const id = await ensureLetterExists(letterId);
   const already = await savedRepo.exists({ userId, letterId: id });
   if (!already) return { deleted: false }; // 멱등성 보장
   await savedRepo.remove({ userId, letterId: id });
-  return { deleted: true }; 
+  return { deleted: true };
 }
-module.exports = { create, listInMailbox, getById, bookmark, unbookmark };
+
+module.exports = {
+  create,
+  listInMailbox,
+  getById,
+  bookmark,
+  unbookmark,
+  isBookmarked,
+};
