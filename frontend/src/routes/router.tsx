@@ -19,7 +19,7 @@ const router = createBrowserRouter([
       { path: "map", element: <MapPage /> },
       { path: "letter/:id/write", element: <WritePage /> },
       { path: "letter/:id", element: <LetterPage /> },
-      { path: "letter/:id/:letterId", element: <LetterDetailPage /> },
+      { path: "letter/:mailboxId/:letterId", element: <LetterDetailPage /> }, // 수정: id → mailboxId
       { path: "mypage", element: <MyPage /> },
       { path: "letterbox", element: <LetterboxPage /> },
     ],

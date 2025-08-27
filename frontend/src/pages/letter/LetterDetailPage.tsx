@@ -7,50 +7,97 @@ import {
   getBookmarkState,
   bookmarkLetter,
   unbookmarkLetter,
-} from "@/apis/letter"; // ← 내가 준 letter.ts에 있음
+  getLetterById,
+} from "@/apis/letter";
 
 export default function LetterDetailPage() {
-  // 🔻 이 줄만 남기고
-const { id: idParam, letterId: letterIdParam } = useParams();
+  const { id: idParam, letterId: letterIdParam } = useParams();
 
-// 🔻 안전 파싱 (letterId 우선, 없으면 id)
-const lid = useMemo(() => {
-  const raw = letterIdParam ?? idParam;
-  const n = Number.parseInt(String(raw ?? ""), 10);
-  return Number.isFinite(n) ? n : null;
-}, [idParam, letterIdParam]);
-
+  const lid = useMemo(() => {
+    const raw = letterIdParam ?? idParam;
+    const n = Number.parseInt(String(raw ?? ""), 10);
+    return Number.isFinite(n) ? n : null;
+  }, [idParam, letterIdParam]);
 
   const nav = useNavigate();
 
-  // (임시) 실제 상세 API 응답으로 대체
-  const letter = {
-    id: lid,
-    title: "비오는 날의 안부",
-    date: "2025.01.03",
-    to: "To.",
-    from: "From.",
-    body: `창밖에는 하루 종일 비가 내렸어.... 어쩌구 저쩌구`,
-  };
-
+  // ✅ 훅은 최상단에서 고정 호출
+  const [letter, setLetter] = useState<{
+    id: number | null;
+    title: string;
+    date: string;
+    to: string;
+    from: string;
+    body: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
   const [initErr, setInitErr] = useState<string | null>(null);
 
-  // ⛳ 초기 저장 상태 동기화 (GET /letters/:id/bookmark)
+  // 1) 편지 상세 불러오기
+  useEffect(() => {
+    if (!lid) {
+      setError("잘못된 편지 ID");
+      setLoading(false);
+      return;
+    }
+
+    let alive = true;
+
+    (async () => {
+      try {
+        const pos = await new Promise<GeolocationPosition>((resolve, reject) =>
+          navigator.geolocation.getCurrentPosition(resolve, reject, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 3000,
+          })
+        );
+
+        const lat = pos.coords.latitude.toFixed(6);
+        const lng = pos.coords.longitude.toFixed(6);
+
+        const data = await getLetterById(lid, { lat, lng });
+
+        if (!alive) return;
+        setLetter({
+          id: lid,
+          title: data.title,
+          date: data.date ?? "날짜 없음",
+          to: data.to ?? "To.",
+          from: data.from ?? "From.",
+          body: data.body ?? "내용 없음",
+        });
+        setError(null);
+      } catch (e: any) {
+        if (!alive) return;
+        setError("편지 내용을 불러오지 못했습니다.");
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [lid]);
+
+  // 2) 북마크 초기 상태 동기화  ← ❗️이 훅을 반드시 return들보다 위로 올림
   useEffect(() => {
     let mounted = true;
     (async () => {
       if (!lid) {
-        setInitErr("잘못된 편지 ID");
+        if (mounted) setInitErr("잘못된 편지 ID");
         return;
       }
       try {
         const { saved } = await getBookmarkState(lid);
         if (mounted) setSaved(saved);
       } catch (e: any) {
-        // 401/403이면 로그인 필요
-        if (mounted) setInitErr(e?.response?.status === 401 ? "로그인이 필요해요" : "상태를 불러오지 못했습니다");
+        if (!mounted) return;
+        setInitErr(e?.response?.status === 401 ? "로그인이 필요해요" : "상태를 불러오지 못했습니다");
         console.error("getBookmarkState failed", e);
       }
     })();
@@ -59,30 +106,31 @@ const lid = useMemo(() => {
     };
   }, [lid]);
 
-  // ✅ 토글: API 성공 후에만 UI 상태 변경 (낙관적 업데이트 ❌)
-  // 기존 (문제): onToggleSave 함수 안에서 lid를 다시 선언해서 덮어씀
-// const lid = Number((letterId ?? id) as string);
-
-// ✅ 수정
-console.log('toggle click', { lid, saved });
-const onToggleSave = async () => {
-  if (lid == null || busy) return;
-
-  const next = !saved;     // 낙관적 업데이트
-  setSaved(next);
-  try {
-    if (next) {
-      await bookmarkLetter(lid);                 // POST /letters/:id/bookmark
-      nav("/mypage", { state: { justSaved: lid } }); // 저장 시에만 전달
-    } else {
-      await unbookmarkLetter(lid);               // DELETE /letters/:id/bookmark
+  // 토글 핸들러
+  const onToggleSave = async () => {
+    if (lid == null || busy) return;
+    setBusy(true);
+    const next = !saved;        // (실제로는 낙관적 업데이트입니다)
+    setSaved(next);
+    try {
+      if (next) {
+        await bookmarkLetter(lid);
+        nav("/mypage", { state: { justSaved: lid } });
+      } else {
+        await unbookmarkLetter(lid);
+      }
+    } catch (e) {
+      console.error("toggle failed", e);
+      setSaved(!next);          // 실패 시 롤백
+    } finally {
+      setBusy(false);
     }
-  } catch (e) {
-    console.error("toggle failed", e);
-    setSaved(!next); // 실패 시 롤백
-  }
-};
+  };
 
+  // ✅ 훅 선언이 모두 끝난 뒤에 분기 렌더링
+  if (loading) return <p>불러오는 중...</p>;
+  if (error) return <p className={styles.errorMsg}>{error}</p>;
+  if (!letter) return <p className={styles.errorMsg}>편지를 찾을 수 없습니다.</p>;
 
   return (
     <>
@@ -99,7 +147,6 @@ const onToggleSave = async () => {
       </header>
 
       <main className={styles.page}>
-        {/* 초기 에러 메시지 (선택) */}
         {initErr && <p className={styles.errorMsg}>{initErr}</p>}
 
         <LetterPaper
@@ -108,9 +155,9 @@ const onToggleSave = async () => {
           to={letter.to}
           from={letter.from}
           body={letter.body}
-          saved={saved}            // ← boolean
-          onToggleSave={onToggleSave} // ← 함수 (아래 주석 참고)
-         // disabled={busy}          // 버튼이 disabled prop을 받는다면 전달
+          saved={saved}
+          onToggleSave={onToggleSave}
+          // disabled={busy}
         />
 
         <section className={styles.actionBar}>

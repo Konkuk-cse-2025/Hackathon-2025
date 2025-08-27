@@ -15,6 +15,8 @@ const create = async (req, res, next) => {
   try {
     const { mailboxId, title, content, lat, lng, password } = req.body;
 
+    console.log("Creating letter with data:", { mailboxId, title, content, lat, lng, password });
+
     if (lat == null || lng == null) {
       const e = new Error('현재 위치(lat,lng)가 필요합니다.');
       e.status = 400;
@@ -76,16 +78,32 @@ const getOne = async (req, res, next) => {
     const { id } = req.params;
     const { lat, lng, password } = req.query;
 
+    console.log("Received request for letter:", { id, lat, lng, password }); // 요청 데이터 로그
+
+    if (!id || !Number.isFinite(Number(id))) {
+      const e = new Error("유효하지 않은 편지 ID입니다.");
+      e.status = 400;
+      throw e;
+    }
+
     if (lat == null || lng == null) {
-      const e = new Error('현재 위치(lat,lng)가 필요합니다.');
+      const e = new Error("현재 위치(lat,lng)가 필요합니다.");
       e.status = 400;
       throw e;
     }
 
     const letter = await svc.getById(id);
+    console.log("Fetched letter from database:", letter); // 데이터베이스에서 가져온 데이터 확인
+
     if (!letter) {
-      const e = new Error('존재하지 않는 편지입니다.');
+      const e = new Error("존재하지 않는 편지입니다.");
       e.status = 404;
+      throw e;
+    }
+
+    if (!letter.mailboxId) {
+      const e = new Error("편지함 정보가 누락되었습니다.");
+      e.status = 500;
       throw e;
     }
 
@@ -96,8 +114,19 @@ const getOne = async (req, res, next) => {
       password,
     });
 
-    res.json(letter);
+    const response = {
+      id: letter.id,
+      title: letter.title,
+      body: letter.body ?? "내용 없음",
+      date: letter.date ?? "날짜 없음",
+      to: letter.to ?? "To.",
+      from: letter.from ?? "From.",
+    };
+
+    console.log("Response to be sent:", response); // 최종 응답 데이터 확인
+    res.json(response);
   } catch (e) {
+    console.error("Error in getOne controller:", e.message); // 오류 로그
     next(e);
   }
 };

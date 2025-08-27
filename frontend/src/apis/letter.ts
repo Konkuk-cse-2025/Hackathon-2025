@@ -148,3 +148,18 @@ export async function toggleBookmark(letterId: string | number, currentSaved: bo
   }
   return bookmarkLetter(letterId);
 }
+
+export async function getLetterById(letterId: number, { lat, lng }: { lat: string; lng: string }) {
+  const { data } = await api.get(`/letters/${letterId}`, {
+    params: { lat, lng }, // 위치 정보 추가
+    withCredentials: true,
+  });
+  return {
+    id: data.id,
+    title: data.title,
+    body: data.body,
+    date: data.date,
+    to: data.to,
+    from: data.from,
+  };
+}

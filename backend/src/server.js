@@ -10,7 +10,7 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:5173", // 정확한 오리진
-    credentials: false, // Allow-Credentials
+    credentials: true, // Allow-Credentials를 true로 설정
   })
 );
 
@@ -19,7 +19,6 @@ app.use(
 app.use(express.json());
 
 // ====== 공통 미들웨어 ======
-app.use(cors()); // 프론트 연동 시 필요
 app.use(express.json()); // JSON Body 파싱
 app.use(express.urlencoded({ extended: false })); // 폼 전송 파싱(선택)
 
