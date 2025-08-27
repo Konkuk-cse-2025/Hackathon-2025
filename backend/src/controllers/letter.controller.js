@@ -15,6 +15,8 @@ const create = async (req, res, next) => {
   try {
     const { mailboxId, title, content, lat, lng, password } = req.body;
 
+    console.log("Creating letter with data:", { mailboxId, title, content, lat, lng, password });
+
     if (lat == null || lng == null) {
       const e = new Error('현재 위치(lat,lng)가 필요합니다.');
       e.status = 400;
@@ -76,16 +78,32 @@ const getOne = async (req, res, next) => {
     const { id } = req.params;
     const { lat, lng, password } = req.query;
 
+    console.log("Received request for letter:", { id, lat, lng, password }); // 요청 데이터 로그
+
+    if (!id || !Number.isFinite(Number(id))) {
+      const e = new Error("유효하지 않은 편지 ID입니다.");
+      e.status = 400;
+      throw e;
+    }
+
     if (lat == null || lng == null) {
-      const e = new Error('현재 위치(lat,lng)가 필요합니다.');
+      const e = new Error("현재 위치(lat,lng)가 필요합니다.");
       e.status = 400;
       throw e;
     }
 
     const letter = await svc.getById(id);
+    console.log("Fetched letter from database:", letter); // 데이터베이스에서 가져온 데이터 확인
+
     if (!letter) {
-      const e = new Error('존재하지 않는 편지입니다.');
+      const e = new Error("존재하지 않는 편지입니다.");
       e.status = 404;
+      throw e;
+    }
+
+    if (!letter.mailboxId) {
+      const e = new Error("편지함 정보가 누락되었습니다.");
+      e.status = 500;
       throw e;
     }
 
@@ -96,8 +114,19 @@ const getOne = async (req, res, next) => {
       password,
     });
 
-    res.json(letter);
+    const response = {
+      id: letter.id,
+      title: letter.title,
+      body: letter.body ?? "내용 없음",
+      date: letter.date ?? "날짜 없음",
+      to: letter.to ?? "To.",
+      from: letter.from ?? "From.",
+    };
+
+    console.log("Response to be sent:", response); // 최종 응답 데이터 확인
+    res.json(response);
   } catch (e) {
+    console.error("Error in getOne controller:", e.message); // 오류 로그
     next(e);
   }
 };
@@ -114,11 +143,13 @@ const bookmark = async (req, res, next) => {
       e.status = 401;
       throw e;
     }
-
     const { id } = req.params;
+
+    // (정확한 created 여부 필요하면 서비스에서 upsert 이전에 조회하도록 변경)
     const { created, saved } = await svc.bookmark({ userId, letterId: id });
 
     return res.status(created ? 201 : 200).json({
+      ok: true,
       message: created ? '북마크 완료' : '이미 북마크 되어 있습니다',
       savedLetterId: saved.id,
     });
@@ -127,10 +158,7 @@ const bookmark = async (req, res, next) => {
   }
 };
 
-// --------------------
 // ✅ 편지 북마크 삭제
-// DELETE /letters/:id/bookmark
-// --------------------
 const unbookmark = async (req, res, next) => {
   try {
     const userId = getUserId(req);
@@ -139,15 +167,37 @@ const unbookmark = async (req, res, next) => {
       e.status = 401;
       throw e;
     }
-
     const { id } = req.params;
-    await svc.unbookmark({ userId, letterId: id });
 
-    // 멱등성: 존재하지 않아도 204
+    await svc.unbookmark({ userId, letterId: id });
     return res.status(204).send();
   } catch (err) {
     next(err);
   }
 };
 
-module.exports = { create, listInMailbox, getOne, bookmark, unbookmark };
+// ✅ 북마크 여부 확인 (초기 상태 동기화용)
+const isBookmarked = async (req, res, next) => {
+  try {
+    const userId = getUserId(req);
+    if (!userId) {
+      const e = new Error('로그인이 필요합니다.');
+      e.status = 401;
+      throw e;
+    }
+    const { id } = req.params;
+    const saved = await svc.isBookmarked({ userId, letterId: id });
+    return res.json({ ok: true, saved, letterId: Number(id) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports = {
+  create,
+  listInMailbox,
+  getOne,
+  bookmark,
+  unbookmark,
+  isBookmarked,   // ← 추가
+};

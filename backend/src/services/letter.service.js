@@ -9,9 +9,7 @@ const prisma = require('../../prisma/client');
 // ✅ 추가: SavedLetter 전용 Repo
 const savedRepo = require('../repositories/savedLetter.repo');
 
-// ---------------------------
-// 기존 기능 (그대로 유지)
-// ---------------------------
+
 async function create({ mailboxId, authorId, title, content }) {
   if (!mailboxId || !title || !content) {
     const e = new Error('mailboxId,title,content 필요');
@@ -35,11 +33,35 @@ async function create({ mailboxId, authorId, title, content }) {
 const listInMailbox = (mailboxId, p = {}) =>
   letterRepo.findByMailbox(mailboxId, Number(p.limit || 50), Number(p.offset || 0));
 
-const getById = (id) => letterRepo.findByIdWithMailbox(id);
+async function getById(id) {
+  console.log("Fetching letter with ID:", id);
 
-// ---------------------------
-// ✅ 추가: 북마크 기능
-// ---------------------------
+  const letter = await prisma.letter.findUnique({
+    where: { id: Number(id) },
+    include: {
+      mailbox: true,
+      author: true,
+    },
+  });
+
+  console.log("Letter fetched from database:", letter);
+
+  if (!letter) {
+    const e = new Error("존재하지 않는 편지입니다.");
+    e.status = 404;
+    throw e;
+  }
+
+  return {
+    id: letter.id,
+    mailboxId: letter.mailbox?.id ?? null,
+    title: letter.title,
+    body: letter.content,
+    date: letter.createdAt.toISOString().split("T")[0],
+    to: letter.mailbox?.name ?? "To.", // 편지함 이름
+    from: letter.author?.name ?? "익명", // 작성자 이름 (없으면 "익명")
+  };
+}
 
 // 편지 존재/ID 유효성 검사
 async function ensureLetterExists(letterId) {
@@ -72,16 +94,6 @@ async function unbookmark({ userId, letterId }) {
   const already = await savedRepo.exists({ userId, letterId: id });
   if (!already) return { deleted: false }; // 멱등성 보장
   await savedRepo.remove({ userId, letterId: id });
-  return { deleted: true };
+  return { deleted: true }; 
 }
-
-module.exports = {
-  // 기존 export 유지
-  create,
-  listInMailbox,
-  getById,
-
-  // ✅ 추가 export
-  bookmark,
-  unbookmark,
-};
+module.exports = { create, listInMailbox, getById, bookmark, unbookmark };

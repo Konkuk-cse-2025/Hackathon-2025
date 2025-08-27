@@ -132,23 +132,25 @@ export default function WritePage() {
     try {
       setSaving(true);
 
-      // ★ 현재 위치 필수
       const pos = await getCurrentPos();
       const lat = +pos.coords.latitude.toFixed(6);
       const lng = +pos.coords.longitude.toFixed(6);
+
+      const body = pages.join("");
+      console.log("Saving letter with data:", { mailboxId, title, to, from, body, lat, lng });
 
       await createLetter({
         mailboxId,
         title: title.trim(),
         to: to.trim() || undefined,
         from: from.trim() || undefined,
-        body: pages.join(""),
-        lat, // ★ 포함
-        lng, // ★ 포함
+        body,
+        lat,
+        lng,
         password: passwordFromNav || undefined,
       });
 
-      navigate(`/letter/${mailboxId}`); // 라우트에 맞추어 이동
+      navigate(`/letter/${mailboxId}`);
     } catch (err: any) {
       console.error(
         "저장 실패:",

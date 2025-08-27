@@ -85,7 +85,14 @@ export default function LetterPage() {
             <ul className={styles.list}>
               {sortedLetters.map((lt) => (
                 <li key={lt.id} className={styles.item}>
-                  <LetterCard title={lt.title} body={lt.body} date={lt.date} />
+                  <button
+                    type="button"
+                    className={styles.itemButton}
+                    onClick={() => nav(`/letter/${mailboxId}/${lt.id}`)} // 수정: mailboxId와 lt.id 포함
+                    aria-label={`편지 상세 보기: ${lt.title}`}
+                  >
+                    <LetterCard title={lt.title} body={lt.body} date={lt.date} />
+                  </button>
                 </li>
               ))}
             </ul>

@@ -1,53 +1,59 @@
 // src/repositories/user.repo.js
-// 임시 인메모리 저장소 (서버 재시작하면 초기화됨)
-const prisma = require("../config/prisma");
-const users = new Map(); // key: id (로그인 아이디), value: user obj
+const prisma = require('../config/prisma'); // 너가 쓰는 경로 그대로
 
-async function isIdTaken(loginId) {
+async function isIdTaken(id) {
   const found = await prisma.user.findUnique({
-    where: { loginId },
-    select: { loginId: true },
+    where: { id },
+    select: { id: true },
   });
   return !!found;
 }
 
-async function create({ loginId, name, passwordHash, email = null }) {
-  const created = await prisma.user.create({
-    data: {
-      loginId,
-      name,
-      password: passwordHash,
-      email, // 이메일을 안 쓰면 null 가능 (스키마가 String? 일 때)
-    },
-    select: {
-      id: true, // cuid (내부 PK)
-      loginId: true, // 로그인용 아이디
-      name: true,
-    },
-  });
-  return created;
-}
-
-async function getByLoginIdWithPassword(loginId) {
+async function findByIdField(id) {
   return prisma.user.findUnique({
-    where: { loginId },
-    select: {
-      id: true, // cuid
-      loginId: true,
-      name: true,
-      password: true, // 해시 포함
-    },
+    where: { id },
+    select: { userID: true, id: true, name: true },
   });
 }
 
-//async function getByUserId(userId) {
-//  for (const u of users.values()) {
-//    if (u.userId === userId) return { userId: u.userId, id: u.id, name: u.name };
-//  }
-//  return null;}
+async function findByIdWithPassword(id) {
+  return prisma.user.findUnique({
+    where: { id },
+    select: { userID: true, id: true, name: true, password: true },
+  });
+}
 
+async function create({ id, name, password }) {
+  // 서비스에서 이미 해시 처리했다는 전제(해시 안돼서 오면 에러)
+  if (typeof password !== 'string' || password.length === 0) {
+    const e = new Error('회원가입에 필요한 비밀번호가 없습니다.');
+    e.status = 400;
+    throw e;
+  }
+  if (!id) {
+    const e = new Error('회원가입에 필요한 아이디가 없습니다.');
+    e.status = 400;
+    throw e;
+  }
+
+  return prisma.user.create({
+    data: { id, name, password }, // <- 해시된 비번 그대로 저장
+    select: { userID: true, id: true, name: true },
+  });
+}
+
+async function findByUserObjectId(userID) {
+  return prisma.user.findUnique({
+    where: { userID },
+    select: { userID: true, id: true, name: true },
+  });
+}
+
+// 🚫 함수 바깥에서 id/name/password 같은 식별자 참조 금지 (ReferenceError 방지)
 module.exports = {
   isIdTaken,
+  findByIdField,
+  findByIdWithPassword,
   create,
-  getByLoginIdWithPassword,
+  findByUserObjectId,
 };
