@@ -97,7 +97,11 @@ export default function LetterDetailPage() {
         if (mounted) setSaved(saved);
       } catch (e: any) {
         if (!mounted) return;
-        setInitErr(e?.response?.status === 401 ? "로그인이 필요해요" : "상태를 불러오지 못했습니다");
+        setInitErr(
+          e?.response?.status === 401
+            ? "로그인이 필요해요"
+            : "상태를 불러오지 못했습니다"
+        );
         console.error("getBookmarkState failed", e);
       }
     })();
@@ -110,18 +114,16 @@ export default function LetterDetailPage() {
   const onToggleSave = async () => {
     if (lid == null || busy) return;
     setBusy(true);
-    const next = !saved;        // (실제로는 낙관적 업데이트입니다)
+    const next = !saved; // (실제로는 낙관적 업데이트입니다)
     setSaved(next);
     try {
       if (next) {
         await bookmarkLetter(lid);
         nav("/mypage", { state: { justSaved: lid } });
-      } else {
-        await unbookmarkLetter(lid);
       }
     } catch (e) {
       console.error("toggle failed", e);
-      setSaved(!next);          // 실패 시 롤백
+      setSaved(!next); // 실패 시 롤백
     } finally {
       setBusy(false);
     }
@@ -130,7 +132,8 @@ export default function LetterDetailPage() {
   // ✅ 훅 선언이 모두 끝난 뒤에 분기 렌더링
   if (loading) return <p>불러오는 중...</p>;
   if (error) return <p className={styles.errorMsg}>{error}</p>;
-  if (!letter) return <p className={styles.errorMsg}>편지를 찾을 수 없습니다.</p>;
+  if (!letter)
+    return <p className={styles.errorMsg}>편지를 찾을 수 없습니다.</p>;
 
   return (
     <>
