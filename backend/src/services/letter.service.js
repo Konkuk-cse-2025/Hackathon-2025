@@ -109,6 +109,29 @@ async function unbookmark({ userId, letterId }) {
   await savedRepo.remove({ userId, letterId: id });
   return { deleted: true };
 }
+  async function listByAuthor({ userId, limit = 50, offset = 0 }) {
+      if (!userId) {
+        const e = new Error("userId 필요");
+        e.status = 400;
+        throw e;
+      }
+      const items = await prisma.letter.findMany({
+        where: { authorId: String(userId) },
+        orderBy: { createdAt: "desc" },
+        take: Number(limit),
+        skip: Number(offset),
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          createdAt: true,
+          mailboxId: true,
+          mailbox: { select: { id: true, name: true } }, // (선택) 편지함 정보도 함께
+        },
+      });
+      // 프론트가 그대로 매핑할 수 있게 원시 필드 유지 (content/createdAt)
+      return items;
+    }
 
 module.exports = {
   create,
@@ -117,4 +140,5 @@ module.exports = {
   bookmark,
   unbookmark,
   isBookmarked,
+  listByAuthor,
 };

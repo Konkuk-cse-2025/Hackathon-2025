@@ -1,6 +1,7 @@
 import { api } from "./apiClient";
 
 export type Letter = {
+  mailboxId: string;
   id: string;
   title: string;
   body: string;
@@ -89,38 +90,7 @@ export async function createLetter(payload: CreateLetterPayload) {
   const { data } = await api.post("/letters", req);
   return data;
 }
-// export async function fetchIsSaved(letterId: number) {
-//   const { data } = await api.get(`/letters/${letterId}/isSaved`, {
-//     withCredentials: true,
-//   });
-//   return data as { ok: boolean; saved: boolean; letterId: number };
-// }
 
-// export async function saveLetter(letterId: number) {
-//   const { data } = await api.post(`/letters/${letterId}/save`, null, {
-//     withCredentials: true,
-//   });
-//   return data as { ok: boolean; saved: true; letterId: number };
-// }
-
-// export async function unsaveLetter(letterId: number) {
-//   const { data } = await api.delete(`/letters/${letterId}/save`, {
-//     withCredentials: true,
-//   });
-//   return data as {
-//     ok: boolean;
-//     saved: false;
-//     letterId: number;
-//     removed: number;
-//   };
-// }
-
-// export async function fetchMySavedLetters() {
-//   const { data } = await api.get(`/users/me/saved-letters`, {
-//     withCredentials: true,
-//   });
-//   return data as { ok: boolean; items: any[] };
-// }
 
 export async function getLetterById(
   letterId: number,
@@ -140,11 +110,8 @@ export async function getLetterById(
   };
 }
 
-export async function getBookmarkState(letterId: number) {
-  // GET /letters/:id/bookmark → { ok, saved, letterId }
-  const { data } = await api.get(`/letters/${letterId}/isSaved`, {
-    withCredentials: true,
-  });
+export async function getBookmarkState(letterId: number | string) {
+  const { data } = await api.get(`/letters/${letterId}/bookmark`);
   return { saved: !!data?.saved };
 }
 
@@ -168,38 +135,29 @@ export async function unbookmarkLetter(letterId: number) {
   return { ok: !!data?.ok, saved: false, letterId: data?.letterId };
 }
 
-// /** 편의 토글 헬퍼 (현재 상태 받아서 분기) */
-// export async function toggleBookmark(
-//   letterId: string | number,
-//   currentSaved: boolean
-// ) {
-//   if (currentSaved) {
-//     return unbookmarkLetter(letterId);
-//   }
-//   return bookmarkLetter(letterId);
-// }
+
 
 // 내가 쓴 편지: Letter[] 그대로 반환
 export async function fetchMyLetters(): Promise<Letter[]> {
-  const { data } = await api.get("/me/letters");
-  // 서버 응답이 { items: [...] } 라고 가정
+  const { data } = await api.get("/me/letters", { withCredentials: true });
   return (data.items ?? []).map((l: any) => ({
     id: String(l.id),
-    title: l.title ?? "무제",
-    content: l.content ?? "",
-    createdAt: l.createdAt ?? "",
+    title: l.title ?? (l.content ? String(l.content).split("\n")[0] : "무제"),
+    body: l.body ?? l.content ?? "",
+    date: String(l.createdAt ?? l.date ?? "").slice(0, 10),
   }));
 }
 
 // 저장한 편지: Letter[] 로 '가공'해서 반환
 export async function fetchSavedLetters(): Promise<Letter[]> {
   const { data } = await api.get("/me/saved");
-  // 서버 응답 예: { items: [{ savedId, savedAt, letter: {...} }]}
-  return (data.items ?? []).map((it: any) => ({
-    id: String(it.id),
-    title: it.title ?? "무제",
-    content: it.letter?.content ?? "",
-    createdAt: it.letter?.createdAt ?? "",
-    savedAt: it.savedAt ?? "",
-  }));
+  return (data.items ?? []).map((it: any) => {
+    const l = it.letter ?? it; // 혹시 평평하게 오는 경우도 커버
+    return {
+      id: String(l.id ?? ""), 
+      title: l.title ?? (l.content ? String(l.content).split("\n")[0] : "무제"),
+      body: l.body ?? l.content ?? "",                               // ✅ 본문
+      date: String(l.createdAt ?? l.date ?? "").slice(0, 10),        // ✅ 날짜
+    };
+  });
 }

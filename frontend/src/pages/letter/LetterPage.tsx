@@ -87,7 +87,7 @@ export default function LetterPage() {
                 <li key={lt.id} className={styles.item}>
                   <button
                     type="button"
-                    className={styles.itemButton}
+                    className={styles.letterButton}
                     onClick={() => nav(`/letter/${mailboxId}/${lt.id}`)} // 수정: mailboxId와 lt.id 포함
                     aria-label={`편지 상세 보기: ${lt.title}`}
                   >

@@ -13,5 +13,6 @@ router.get('/summary', authGuard, meCtrl.summary);
 // 버튼 클릭 시 목록 조회
 router.get('/letters', authGuard, meCtrl.getMyLetters);
 router.get('/saved',  authGuard, meCtrl.getSavedLetters);
+router.get("/letters", meCtrl.myLetters);
 
 module.exports = router;

@@ -73,9 +73,10 @@ const gate = async (req, res, next) => {
       throw e;
     }
     const r = await service.gate({
-      mailboxId: id,
-      userLat: lat,
-      userLng: lng,
+      req,
+      mailboxId: Number(id),
+      userLat: Number(lat),
+      userLng: Number(lng),
       password,
     });
     res.json(r);

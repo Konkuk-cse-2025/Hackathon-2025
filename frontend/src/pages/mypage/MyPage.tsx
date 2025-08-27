@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./MyPage.module.css";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
 import Header from "@/components/common/Header/Header";
@@ -11,6 +12,7 @@ import {
 } from "../../apis/letter";
 
 export default function MyPage() {
+  const nav = useNavigate();
   const [user, setUser] = useState<AuthUser | null>(null);
   const [myLetters, setMyLetters] = useState<APILetter[]>([]);
   const [savedLetters, setSavedLetters] = useState<APILetter[]>([]);
@@ -63,17 +65,21 @@ export default function MyPage() {
               className={styles.inlineImg}
             />
           </h2>
-          {/* 콘텐츠 영역: 리스트/링크가 들어갈 자리 */}
           <div className={styles.cardBody}>
+            {" "}
             {myLetters
               .filter((lt) => lt.id)
               .map((lt) => (
-                <LetterCard
-                  key={lt.id}
-                  title={lt.title}
-                  body={lt.body}
-                  date={lt.date}
-                />
+                <button
+                    key={lt.id}
+                    type="button"
+                    className={styles.letterButton}
+                    onClick={() => nav(`/letters/${lt.id}`)}
+                    aria-label={`${lt.title} 상세보기`}
+                    // 수정: mailboxId와 lt.id 포함
+                  >
+                    <LetterCard title={lt.title} body={lt.body} date={lt.date} />
+                  </button>
               ))}
           </div>
         </section>
@@ -97,12 +103,16 @@ export default function MyPage() {
             {savedLetters
               .filter((lt) => lt.id)
               .map((lt) => (
-                <LetterCard
-                  key={lt.id}
-                  title={lt.title}
-                  body={lt.body}
-                  date={lt.date}
-                />
+                <button
+                    key={lt.id}
+                    type="button"
+                    className={styles.letterButton}
+                    onClick={() => nav(`/letters/${lt.id}`)}
+                    aria-label={`${lt.title} 상세보기`}
+                    // 수정: mailboxId와 lt.id 포함
+                  >
+                    <LetterCard title={lt.title} body={lt.body} date={lt.date} />
+                  </button>
               ))}
           </div>
         </section>
