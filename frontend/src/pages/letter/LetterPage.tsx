@@ -112,7 +112,7 @@ export default function LetterPage() {
         >
           편지 쓰기
         </Button>
-        <Button className={styles.exitButton} onClick={() => nav(-1)}>
+        <Button className={styles.exitButton} onClick={() => nav(`/map`)}>
           편지함 나가기
         </Button>
       </div>
