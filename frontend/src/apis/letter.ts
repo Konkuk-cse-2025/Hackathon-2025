@@ -178,3 +178,28 @@ export async function unbookmarkLetter(letterId: number) {
 //   }
 //   return bookmarkLetter(letterId);
 // }
+
+// 내가 쓴 편지: Letter[] 그대로 반환
+export async function fetchMyLetters(): Promise<Letter[]> {
+  const { data } = await api.get("/me/letters");
+  // 서버 응답이 { items: [...] } 라고 가정
+  return (data.items ?? []).map((l: any) => ({
+    id: String(l.id),
+    title: l.title ?? "무제",
+    content: l.content ?? "",
+    createdAt: l.createdAt ?? "",
+  }));
+}
+
+// 저장한 편지: Letter[] 로 '가공'해서 반환
+export async function fetchSavedLetters(): Promise<Letter[]> {
+  const { data } = await api.get("/me/saved");
+  // 서버 응답 예: { items: [{ savedId, savedAt, letter: {...} }]}
+  return (data.items ?? []).map((it: any) => ({
+    id: String(it.id),
+    title: it.title ?? "무제",
+    content: it.letter?.content ?? "",
+    createdAt: it.letter?.createdAt ?? "",
+    savedAt: it.savedAt ?? "",
+  }));
+}

@@ -2,13 +2,13 @@ import { useState, useEffect } from "react";
 import styles from "./MyPage.module.css";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
 import Header from "@/components/common/Header/Header";
-import { AuthUser } from "@/apis/auth";
+import { AuthUser } from "../../apis/auth";
 import LetterCard from "@/components/LetterPage/LetterCard";
 import {
   fetchMyLetters,
   fetchSavedLetters,
   type Letter as APILetter,
-} from "@/apis/mypage";
+} from "../../apis/letter";
 
 export default function MyPage() {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -71,8 +71,8 @@ export default function MyPage() {
                 <LetterCard
                   key={lt.id}
                   title={lt.title}
-                  body={lt.content}
-                  date={new Date(lt.createdAt).toLocaleDateString()}
+                  body={lt.body}
+                  date={lt.date}
                 />
               ))}
           </div>
@@ -100,8 +100,8 @@ export default function MyPage() {
                 <LetterCard
                   key={lt.id}
                   title={lt.title}
-                  body={lt.content}
-                  date={new Date(lt.createdAt).toLocaleDateString()}
+                  body={lt.body}
+                  date={lt.date}
                 />
               ))}
           </div>
