@@ -19,13 +19,13 @@ model User {
   name      String
   createdAt DateTime @default(now())
 
-  letters Letter[]
-  mailboxes Mailbox[]
+  letters      Letter[]
+  mailboxes    Mailbox[]
   savedLetters SavedLetter[]
 }
 
 model Mailbox {
-  id           Int      @id @default(autoincrement())
+  id           Int         @id @default(autoincrement())
   name         String
   type         MailboxType
   passwordHash String?
@@ -53,7 +53,7 @@ model Letter {
   title     String
   content   String
   savedBy   SavedLetter[]
-  createdAt DateTime @default(now())
+  createdAt DateTime      @default(now())
 
   // 관계
   mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
@@ -63,14 +63,14 @@ model Letter {
 }
 
 model SavedLetter {
-id        Int      @id @default(autoincrement())
-userId    String
-letterId  Int
-createdAt DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  userId    String
+  letterId  Int
+  createdAt DateTime @default(now())
 
-user   User   @relation(fields: [userId], references: [id])
-letter Letter @relation(fields: [letterId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  letter Letter @relation(fields: [letterId], references: [id])
 
-@@unique([userId, letterId], name: "userId_letterId_unique")
-@@index([userId, createdAt])
+  @@unique([userId, letterId], name: "userId_letterId_unique")
+  @@index([userId, createdAt])
 }
