@@ -1,16 +1,21 @@
 // src/server.js
+const cors = require("cors");
+
+const allowedOrigins = [
+  "http://localhost:5173", // Vite dev
+  "https://konkuk-hackathon-2025-qu2t.vercel.app", // 배포 프론트 도메인
+];
+
 const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 
 const express = require("express");
-const cors = require("cors");
-
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // 정확한 오리진
-    credentials: false, // Allow-Credentials
+    origin: allowedOrigins,
+    credentials: true, // Allow-Credentials
   })
 );
 
@@ -19,7 +24,6 @@ app.use(
 app.use(express.json());
 
 // ====== 공통 미들웨어 ======
-app.use(cors()); // 프론트 연동 시 필요
 app.use(express.json()); // JSON Body 파싱
 app.use(express.urlencoded({ extended: false })); // 폼 전송 파싱(선택)
 
