@@ -9,7 +9,7 @@ datasource db {
 
 enum MailboxType {
   OPEN
-  SECRET
+  SECRET  
 }
 
 model User {

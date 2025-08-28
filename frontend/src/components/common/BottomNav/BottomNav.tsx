@@ -10,7 +10,7 @@ export default function BottomNav() {
           isActive ? styles.active : styles.inactive
         }
       >
-        <img src="icons/mapLogo.svg" className={styles.icon} />
+        <img src="icons/map.svg" className={styles.icon} />
       </NavLink>
       <NavLink
         to="/mypage"
@@ -18,7 +18,7 @@ export default function BottomNav() {
           isActive ? styles.active : styles.inactive
         }
       >
-        <img src="icons/myLogo.svg" className={styles.profileIcon} />
+        <img src="icons/profile.svg" className={styles.profileIcon} />
       </NavLink>
     </nav>
   );
