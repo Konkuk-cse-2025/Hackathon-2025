@@ -14,7 +14,7 @@ enum MailboxType {
 
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
+  loginId   String   @unique
   password  String
   name      String
   createdAt DateTime @default(now())
@@ -36,15 +36,18 @@ model Mailbox {
 }
 
 model Letter {
-  id        Int      @id @default(autoincrement())
-  mailboxId Int
-  authorId  Int?
-  title     String
-  content   String
-  createdAt DateTime @default(now())
+  id         Int       @id @default(autoincrement())
+  mailboxId  Int
+  authorId   Int?
+  title      String
+  content    String
+  toName     String?   // 예: "유정", "어느 새벽의 너"
+  fromName   String?   // 예: "익명", "따뜻한 바람"
 
-  mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
-  author  User?   @relation(fields: [authorId], references: [id])
+  createdAt  DateTime  @default(now())
+
+  mailbox    Mailbox   @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
+  author     User?     @relation(fields: [authorId], references: [id])
 
   @@index([mailboxId, createdAt])
 }
