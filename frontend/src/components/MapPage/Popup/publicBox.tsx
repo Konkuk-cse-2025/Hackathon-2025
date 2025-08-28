@@ -18,8 +18,13 @@ export default function PublicBox({
   onClose,
 }: PublicBoxProps) {
   return (
+    
     <Card className={styles.popupCard}>
       <div className={styles.header}>
+        <img
+            src="/icons/mailbox.png"
+            className={styles.icon}
+          />
         <div className={styles.title}>
           {boxName}
           <button
@@ -31,7 +36,6 @@ export default function PublicBox({
             <img src="icons/x.svg" alt="닫기" className={styles.closeIcon} />
           </button>
         </div>
-        <div className={styles.sub}>created by. {ownerName}</div>
       </div>
 
       <div className={styles.actionsRow}>
