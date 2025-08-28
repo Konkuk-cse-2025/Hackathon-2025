@@ -1,19 +1,53 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./MyPage.module.css";
 import BottomNav from "@/components/common/BottomNav/BottomNav";
 import Header from "@/components/common/Header/Header";
+import { AuthUser } from "../../apis/auth";
+import LetterCard from "@/components/LetterPage/LetterCard";
+import {
+  fetchMyLetters,
+  fetchSavedLetters,
+  type Letter as APILetter,
+} from "../../apis/letter";
 
 export default function MyPage() {
+  const nav = useNavigate();
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [myLetters, setMyLetters] = useState<APILetter[]>([]);
+  const [savedLetters, setSavedLetters] = useState<APILetter[]>([]);
+
+  useEffect(() => {
+    const raw = localStorage.getItem("user");
+    if (raw) {
+      try {
+        setUser(JSON.parse(raw));
+      } catch {
+        localStorage.removeItem("user");
+      }
+    }
+
+    // API 호출
+    (async () => {
+      try {
+        const written = await fetchMyLetters();
+        setMyLetters(written);
+
+        const savedList = await fetchSavedLetters();
+        setSavedLetters(savedList);
+      } catch (e) {
+        console.error("마이페이지 데이터 로드 실패", e);
+      }
+    })();
+  }, []);
+
   return (
     <div className={styles.page}>
       {/* 봉투 플랩 헤더 */}
       <header className={styles.header}>
-        <Header title="나의 편지함" />
-        <img
-          src="/icons/letterbox.png"
-          alt=""
-          className={styles.headerEmoji}
-          aria-hidden="true"
-        />
+        <div className={styles.headerInner}>
+          <Header title={`${user ? user.name : "나"}의 편지함`} />
+        </div>
       </header>
 
       <main className={styles.main}>
