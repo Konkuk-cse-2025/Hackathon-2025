@@ -10,6 +10,7 @@ type SecretBoxProps = {
   onVerify: (password: string) => Promise<boolean> | boolean;
   onEnter: () => void; // 검증 성공 후 진입
   onClose?: () => void;
+  hint?: string;
 };
 
 export default function SecretBox({
@@ -18,6 +19,7 @@ export default function SecretBox({
   onVerify,
   onEnter,
   onClose,
+  hint,
 }: SecretBoxProps) {
   const [pw, setPw] = useState("");
   const [loading, setLoading] = useState(false);
@@ -82,6 +84,15 @@ export default function SecretBox({
           {loading ? "확인중..." : "확인"}
         </Button>
       </div>
+
+      {/* ⬅⬅ 바로 '비밀번호 입력창 아래'에 힌트 표시 */}
+      {hint ? (
+        <div style={{ marginTop: 6 }}>
+          <p style={{ fontSize: 12, lineHeight: "16px", color: "#8a6851" }}>
+            힌트: {hint}
+          </p>
+        </div>
+      ) : null}
 
       {/* 상태 메시지 */}
       <div
