@@ -1,3 +1,4 @@
+rm -f .git/index
 // src/services/mailbox.service.js
 const {
   makeBoundingBox,
