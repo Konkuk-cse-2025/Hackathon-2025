@@ -17,6 +17,7 @@ export type Letterbox = {
   lat: number;
   lng: number;
   isSecret: boolean; // true=비밀, false=공개
+  hint?: string;
 };
 
 export default function MapPage() {
@@ -62,6 +63,7 @@ export default function MapPage() {
             lat: it.lat,
             lng: it.lng,
             isSecret: it.isSecret,
+            hint: it.hint ?? it.passwordHint ?? "",
           }))
         );
       } catch (e) {
@@ -84,6 +86,7 @@ export default function MapPage() {
               lat: it.lat,
               lng: it.lng,
               isSecret: it.isSecret,
+              hint: it.hint ?? it.passwordHint ?? "",
             }))
           );
         } catch (e2) {
@@ -161,12 +164,9 @@ export default function MapPage() {
               <SecretBox
                 boxName={selectedBox.name}
                 ownerName={selectedBox.ownerName}
+                hint={selectedBox.hint}
                 onVerify={verifyPw} // ⬅ 비밀함은 여기서 서버검증
                 onEnter={() => {
-                  if (!verifiedPw) {
-                    alert("비밀번호 검증이 필요합니다.");
-                    return;
-                  }
                   const pw = verifiedPw;
                   setVerifiedPw(null);
                   setSelected(null);
