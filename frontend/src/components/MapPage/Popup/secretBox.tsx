@@ -10,6 +10,7 @@ type SecretBoxProps = {
   onVerify: (password: string) => Promise<boolean> | boolean;
   onEnter: () => void; // 검증 성공 후 진입
   onClose?: () => void;
+  hint?: string;
 };
 
 export default function SecretBox({
@@ -18,6 +19,7 @@ export default function SecretBox({
   onVerify,
   onEnter,
   onClose,
+  hint,
 }: SecretBoxProps) {
   const [pw, setPw] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,15 +37,19 @@ export default function SecretBox({
     try {
       const result = await onVerify(pw);
       setOk(result);
-      if (result) onEnter();
-      else setError("비밀번호가 올바르지 않습니다.");
+      if (!result) setError("비밀번호가 올바르지 않습니다.");
     } catch {
       setOk(false);
       setError("잠시 후 다시 시도해 주세요.");
     } finally {
       setLoading(false);
     }
-  }, [pw, onVerify, onEnter]);
+  }, [pw, onVerify]);
+
+  const handleOpen = useCallback(() => {
+    if (ok) onEnter();
+    else setError("먼저 비밀번호를 확인해 주세요.");
+  }, [ok, onEnter]);
 
   return (
     <Card className={`${styles.popupCard} ${styles.secret}`}>
@@ -69,7 +75,11 @@ export default function SecretBox({
           type="password"
           value={pw}
           placeholder="비밀번호를 입력해 주세요"
-          onChange={(e) => setPw(e.target.value)}
+          onChange={(e) => {
+            setPw(e.target.value);
+            setOk(null);         // ✅ 입력이 바뀌면 인증 상태 초기화
+            setError("");        // ✅ 메시지 초기화
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleVerify()}
           className={ok === false ? styles.inputError : ""}
         />
@@ -83,6 +93,15 @@ export default function SecretBox({
         </Button>
       </div>
 
+      {/* ⬅⬅ 바로 '비밀번호 입력창 아래'에 힌트 표시 */}
+      {hint ? (
+        <div style={{ marginTop: 6 }}>
+          <p style={{ fontSize: 12, lineHeight: "16px", color: "#8a6851" }}>
+            힌트: {hint}
+          </p>
+        </div>
+      ) : null}
+
       {/* 상태 메시지 */}
       <div
         role="status"
@@ -94,13 +113,15 @@ export default function SecretBox({
             : styles.statusIdle
         }
       >
-        {ok === true && "인증됨"}
-        {ok === false && error}
-        {!ok && error && error}
+        {ok === true ? "비밀번호가 일치합니다." : error}
       </div>
 
       <div className={styles.actionsRow}>
-        <Button onClick={onEnter} style={{ backgroundColor: "#8a6851" }}>
+        <Button
+          onClick={handleOpen}     // ✅ 이동은 여기서만
+          disabled={!ok}           // ✅ 인증 성공 전엔 비활성화
+          style={{ backgroundColor: "#8a6851" }}
+        >
           편지함 열기
         </Button>
       </div>

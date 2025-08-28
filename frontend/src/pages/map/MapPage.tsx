@@ -17,6 +17,7 @@ export type Letterbox = {
   lat: number;
   lng: number;
   isSecret: boolean; // true=비밀, false=공개
+  hint?: string;
 };
 
 export default function MapPage() {
@@ -79,14 +80,51 @@ export default function MapPage() {
         const lng = pos.coords.longitude;
         setMyLat(lat);
         setMyLng(lng);
+
         await loadNearby(lat, lng, 10000);
+        const data = await fetchLetterboxes({ lat, lng, radius: 10000 });
+
+        // 3) 서버 -> UI 매핑이 API 모듈에 있으면 그대로 set
+        setBoxes(
+          data.map((it: any) => ({
+            id: String(it.id),
+            name: it.name,
+            ownerName: it.ownerName ?? it.owner?.name ?? "익명",
+            lat: it.lat,
+            lng: it.lng,
+            isSecret: it.isSecret,
+            hint: it.hint ?? it.passwordHint ?? "",
+          }))
+        );
       } catch (e) {
         console.error(e);
         const lat = 37.5665;
         const lng = 126.978;
         setMyLat(lat);
         setMyLng(lng);
+
         await loadNearby(lat, lng, 1000);
+
+        try {
+          const fallback = await fetchLetterboxes({
+            lat: 37.5665,
+            lng: 126.978,
+            radius: 1000,
+          });
+          setBoxes(
+            fallback.map((it: any) => ({
+              id: String(it.id),
+              name: it.name,
+              ownerName: it.ownerName ?? it.owner?.name ?? "익명",
+              lat: it.lat,
+              lng: it.lng,
+              isSecret: it.isSecret,
+              hint: it.hint ?? it.passwordHint ?? "",
+            }))
+          );
+        } catch (e2) {
+          console.error("fallback also failed", e2);
+        }
       }
     })();
   }, []);
@@ -161,12 +199,10 @@ export default function MapPage() {
               <SecretBox
                 boxName={selectedBox.name}
                 ownerName={selectedBox.ownerName}
-                onVerify={verifyPw}
+
+                hint={selectedBox.hint}
+                onVerify={verifyPw} // ⬅ 비밀함은 여기서 서버검증
                 onEnter={() => {
-                  if (!verifiedPw) {
-                    alert("비밀번호 검증이 필요합니다.");
-                    return;
-                  }
                   const pw = verifiedPw;
                   setVerifiedPw(null);
                   setSelected(null);

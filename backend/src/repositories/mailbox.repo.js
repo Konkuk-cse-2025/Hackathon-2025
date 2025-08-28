@@ -43,6 +43,7 @@ async function findInBounds(bounds) {
       lat: true,
       lng: true,
       createdAt: true,
+      hint: true,
     },
   });
 }
@@ -64,6 +65,7 @@ async function findById(id) {
       lng: true,
       passwordHash: true,
       createdAt: true,
+      hint: true,
     },
   });
 }

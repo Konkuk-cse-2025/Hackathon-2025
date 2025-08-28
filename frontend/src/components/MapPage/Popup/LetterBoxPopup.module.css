@@ -91,3 +91,9 @@
 .lock {
   margin-right: 6px;
 }
+
+/* 공통 여백 */
+.hintBlock { margin-top: 12px; }
+.statusMsg { margin-top: 12px; min-height: 18px; } /* 메시지가 생겨도 점프 최소화 */
+.actionsRow { margin-top: 12px; } /* 상태 → 버튼 간격 */
+.hintText { font-size: 12px; line-height: 16px; color: #8a6851; }
