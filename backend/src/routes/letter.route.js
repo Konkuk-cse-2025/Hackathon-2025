@@ -12,6 +12,7 @@ router.get("/:id", controller.getOne); // GET  /letters/:id
 // listInMailbox가 다른 라우터(예: /mailboxes/:id/letters)에 있다면 생략해도 됨
 
 // ✅ 북마크 추가/삭제 (server.js에서 '/letters'로 마운트됨)
+router.get('/:id/bookmark', authGuard, controller.isBookmarked);
 router.post("/:id/bookmark", authGuard, controller.bookmark); // POST   /letters/:id/bookmark
 router.delete("/:id/bookmark", authGuard, controller.unbookmark); // DELETE /letters/:id/bookmark
 router.get("/:id/isSaved", authGuard, controller.isBookmarked);
