@@ -30,32 +30,38 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
   const meMarkerRef = useRef<any>(null);
   const watchIdRef = useRef<number | null>(null);
 
-  const lastPosRef = useRef<{ lat: number; lng: number; t: number } | null>(
-    null
-  );
+  const lastPosRef = useRef<{ lat: number; lng: number; t: number } | null>(null);
 
-  const smoothBuf: Array<{ lat: number; lng: number }> = [];
+  // ✅ 스무딩 버퍼는 ref로 (리렌더에도 유지)
+  const smoothBufRef = useRef<Array<{ lat: number; lng: number }>>([]);
   function smoothPush(p: { lat: number; lng: number }) {
-    smoothBuf.push(p);
-    if (smoothBuf.length > 5) smoothBuf.shift(); // 최근 5개만
+    const buf = smoothBufRef.current;
+    buf.push(p);
+    if (buf.length > 5) buf.shift(); // 최근 5개만
   }
   function smoothAverage() {
-    if (smoothBuf.length === 0) return lastPosRef.current ?? { lat: 0, lng: 0 };
-    const s = smoothBuf.reduce(
+    const buf = smoothBufRef.current;
+    if (buf.length === 0) {
+      const last = lastPosRef.current ?? { lat: 0, lng: 0 };
+      return { lat: last.lat, lng: last.lng };
+    }
+    const s = buf.reduce(
       (a, b) => ({ lat: a.lat + b.lat, lng: a.lng + b.lng }),
       { lat: 0, lng: 0 }
     );
-    return { lat: s.lat / smoothBuf.length, lng: s.lng / smoothBuf.length };
+    return { lat: s.lat / buf.length, lng: s.lng / buf.length };
   }
 
   const [follow, setFollow] = useState(true);
   const followRef = useRef(follow);
   followRef.current = follow;
 
+  // 최초 1회 bounds fit 했는지 추적
+  const didFitRef = useRef(false);
+
   useEffect(() => {
     let mounted = true;
 
-    // ✅ async IIFE로 감싸서 await 사용
     (async () => {
       const naver = await waitForNaverMaps();
       if (!mounted || !mapDivRef.current) return;
@@ -71,7 +77,7 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
         map,
       });
 
-      // === 여기서 브라우저 현재 위치 API 실행 ===
+      // === 현재 위치 ===
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
@@ -100,23 +106,24 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
             const timestamp = pos.timestamp;
             const here = new naver.maps.LatLng(latitude, longitude);
 
-            // 1) 정확도 필터: 80m 이상 오차는 무시
+            // 정확도 필터(옵션): 필요시 켜기
             // if (accuracy && accuracy > 80) return;
 
-            // 2) 점프 필터: 1초 내 60m 이상 이동은 무시
             const prev = lastPosRef.current;
             if (prev) {
               const dt = (timestamp - prev.t) / 1000;
-              if (naver.maps.geometry && naver.maps.geometry.spherical) {
+              const hasGeom = !!(naver.maps.geometry && naver.maps.geometry.spherical);
+              if (hasGeom) {
                 const dist = naver.maps.geometry.spherical.computeDistance(
                   new naver.maps.LatLng(prev.lat, prev.lng),
                   here
                 );
+                // 1초 내 60m 이상 이동은 점프 취급
                 if (dt < 1 && dist > 60) return;
               }
             }
 
-            // 3) 이동 평균(스무딩)
+            // 스무딩
             smoothPush({ lat: latitude, lng: longitude });
             const avg = smoothAverage();
             const smoothLatLng = new naver.maps.LatLng(avg.lat, avg.lng);
@@ -124,10 +131,9 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
             // 마커 갱신
             meMarkerRef.current?.setPosition(smoothLatLng);
 
-            // 카메라 이동
+            // 따라가기면 카메라 이동
             if (followRef.current) mapRef.current?.panTo(smoothLatLng);
 
-            // 위치 기록
             lastPosRef.current = {
               lat: latitude,
               lng: longitude,
@@ -138,19 +144,24 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
           { enableHighAccuracy: true, maximumAge: 3000, timeout: 10000 }
         );
       }
-      // 5) 지도를 드래그/핀치하면 따라가기 해제(UX)
+
+      // 지도를 드래그/핀치하면 따라가기 해제(UX)
       const stopFollow = () => setFollow(false);
       const dragId = naver.maps.Event.addListener(map, "dragstart", stopFollow);
-      const pinchId = naver.maps.Event.addListener(
-        map,
-        "pinchstart",
-        stopFollow
-      );
+      const pinchId = naver.maps.Event.addListener(map, "pinchstart", stopFollow);
 
-      // 클린업 등록
+      // 창 크기 변경 시 지도 리사이즈 트리거
+      const onResize = () => {
+        if (!mapRef.current) return;
+        naver.maps.Event.trigger(mapRef.current, "resize");
+      };
+      window.addEventListener("resize", onResize);
+
+      // 클린업
       return () => {
         naver.maps.Event.removeListener(dragId);
         naver.maps.Event.removeListener(pinchId);
+        window.removeEventListener("resize", onResize);
       };
     })();
 
@@ -163,27 +174,106 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
     };
   }, []);
 
+  // ✅ 선택된 편지함으로 panTo
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !selectedId) return;
+
+    const naver = (window as any).naver;
+    const target = letterboxes.find((b) => b.id === selectedId);
+    if (!target || !naver?.maps) return;
+
+    const latlng = new naver.maps.LatLng(target.lat, target.lng);
+    map.panTo(latlng);
+    // 필요하면 약간 확대
+    // if (map.getZoom() < 16) map.setZoom(16, true);
+  }, [selectedId, letterboxes]);
+
+  // ✅ 초기에 편지함들 보이도록 fitBounds (한 번만)
+  // ✅ 초기에 편지함들 보이도록 fitBounds (한 번만, isEmpty() 없이 안전하게)
+    useEffect(() => {
+      const map = mapRef.current;
+      if (!map || didFitRef.current) return;
+
+      const naver = (window as any).naver;
+      if (!naver?.maps) return;
+
+      const hasBoxes = Array.isArray(letterboxes) && letterboxes.length > 0;
+      const hasMe = !!lastPosRef.current;
+
+      // 아무 점도 없으면 스킵
+      if (!hasBoxes && !hasMe) return;
+
+      // 첫 점으로 bounds 초기화 (LatLngBounds에 isEmpty가 없으니 이렇게 시작)
+      let firstLatLng: any = null;
+      if (hasMe) {
+        firstLatLng = new naver.maps.LatLng(lastPosRef.current!.lat, lastPosRef.current!.lng);
+      } else {
+        // hasBoxes가 true일 때만 들어옴
+        firstLatLng = new naver.maps.LatLng(letterboxes[0].lat, letterboxes[0].lng);
+      }
+
+      const bounds = new naver.maps.LatLngBounds(firstLatLng, firstLatLng);
+
+      // 편지함들 포함
+      if (hasBoxes) {
+        for (let i = 0; i < letterboxes.length; i++) {
+          const b = letterboxes[i];
+          bounds.extend(new naver.maps.LatLng(b.lat, b.lng));
+        }
+      }
+
+      // 내 위치도 포함
+      if (hasMe) {
+        bounds.extend(new naver.maps.LatLng(lastPosRef.current!.lat, lastPosRef.current!.lng));
+      }
+
+      try {
+        map.fitBounds(bounds);
+        didFitRef.current = true;
+      } catch (e) {
+        // fitBounds가 실패하더라도 앱이 죽지 않게 방지
+        console.warn("fitBounds failed:", e);
+      }
+    }, [letterboxes]);
+
+
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      {/* 지도 위 컨트롤 오버레이 */}
       <div className={styles.overlay}>
-        <button onClick={() => setFollow((v) => !v)}
-          className={styles.iconBtn1}>
-          {follow ? <img src="icons/follow_off.png" alt="닫기" className={styles.icon1}/> : <img src="icons/follow_on.png" alt="닫기" className={styles.icon1} />}
+        <button
+          onClick={() => setFollow((v) => !v)}
+          className={styles.iconBtn1}
+          aria-pressed={follow}
+          title={follow ? "따라가기 끄기" : "따라가기 켜기"}
+        >
+          {follow ? (
+            <img src="icons/follow_off.png" alt="따라가기 끄기" className={styles.icon1} />
+          ) : (
+            <img src="icons/follow_on.png" alt="따라가기 켜기" className={styles.icon1} />
+          )}
         </button>
+
         <button
           onClick={() => {
             const pos = meMarkerRef.current?.getPosition?.();
-            if (pos && mapRef.current) mapRef.current.panTo(pos);
+            if (pos && mapRef.current) {
+              mapRef.current.panTo(pos);
+              setFollow(true); // 내 위치로 이동 시 따라가기 복구 (UX)
+            }
           }}
           className={styles.iconBtn}
+          title="내 위치로 이동"
         >
-          <img src="icons/myfind.png" alt="닫기" className={styles.icon} />
+          <img src="icons/myfind.png" alt="내 위치로 이동" className={styles.icon} />
         </button>
       </div>
-      <div
-        ref={mapDivRef}
-        style={{ width: "100%", height: "100%", zIndex: 0 }}
-      />
+
+      {/* 지도 DOM */}
+      <div ref={mapDivRef} style={{ width: "100%", height: "100%", zIndex: 0 }} />
+
+      {/* 편지함 마커들 */}
       {mapRef.current &&
         letterboxes.map((b) => (
           <LetterboxMarker

@@ -9,7 +9,16 @@
   overflow: hidden;
   z-index: 0;
 }
-
+.icon{
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+}
+.icon1{
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+}
 /* 기존 .cta는 가운데 고정 */
 .cta {
   position: absolute;
@@ -33,4 +42,124 @@
 .actionsRight {
   display: flex;
   justify-content: flex-end; /* 오른쪽으로 밀기 */
+}
+
+
+/* === 카드 오버레이 === */
+.card {
+  position: absolute;
+  left: 12px;
+  right: 160px;
+  bottom: 96px;            /* BottomNav 위로 띄우기 */
+  z-index: 20;             /* 지도(0)와 오버레이(10)보다 위 */
+  background: rgba(255, 240, 215, 0.92);
+  backdrop-filter: saturate(180%) blur(6px);
+  border: 1px solid #eee;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  padding: 12px;
+  pointer-events: auto;    /* 카드 클릭 가능 */
+  height: 200px;      /* 고정 */
+  max-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 카드 헤더: 타이틀 + 새로고침 버튼 */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cardTitle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 800;
+  font-size: 16px;
+  color: #5a3d2c;
+  margin: 0;              /* 기본 h2 margin 제거 */
+}
+
+
+
+/* 새로고침 버튼 (프로젝트 버튼 톤과 맞춤) */
+.refreshBtn {
+  background: #fffaee;
+  color: #fff;
+  border: 2px solid #917348; 
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .15s ease, opacity .15s ease;
+}
+.refreshBtn:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+.refreshBtn:disabled { opacity: .6; cursor: not-allowed; }
+
+/* 카드 바디: 스크롤 영역 */
+.cardBody {
+  flex: 1 1 auto;  /* 남은 공간 채우기 */
+  min-height: 0;   /* 스크롤 동작을 위해 필요 */
+  overflow-y: auto;
+  padding-top: 4px;
+}
+
+/* 리스트 스타일 */
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+
+/* 각 항목 버튼 */
+.letterButton {
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  height: 70px;
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+.letterButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+/* 이름/메타 */
+.lbName {
+  display: block;
+  font-weight: 700;
+  color: #3d2a1e;
+}
+.lbMeta {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  color: #8b7768;
+}
+
+/* 상태 텍스트 */
+.errorText {
+  color: #b00020;
+  padding: 6px 0 8px;
+  font-size: 14px;
+}
+.emptyText {
+  color: #6b6b6b;
+  padding: 6px 0 8px;
+  font-size: 14px;
+  text-align: center;
 }
