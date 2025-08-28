@@ -1,3 +1,4 @@
+// backend/src/server.js
 require("dotenv").config();
 const path = require("path");
 const express = require("express");
@@ -7,6 +8,7 @@ const fs = require("fs");
 const SQLiteStore = require("connect-sqlite3")(session);
 const { PrismaClient } = require("@prisma/client");
 
+// 로컬 개발 시 .env 경로 보조 로드
 if (
   !process.env.RAILWAY_ENVIRONMENT_NAME &&
   process.env.NODE_ENV !== "production"
@@ -26,22 +28,28 @@ const allowedOrigins = [
   "http://localhost:4173", // vite preview
   "http://127.0.0.1:4173",
   "https://konkuk-hackathon-2025-qu2t.vercel.app", // 배포 프론트
-  process.env.FRONT_ORIGIN,
+  process.env.FRONT_ORIGIN, // 환경변수로 주입 가능
 ].filter(Boolean);
 
-app.use(
-  cors({
-    origin: function (origin, cb) {
-      // 개발 도중 curl/Postman 등 origin 없는 요청 허용
-      if (!origin) return cb(null, true);
-      if (allowedOrigins.includes(origin)) return cb(null, true);
-      return cb(new Error("Not allowed by CORS: " + origin), false);
-    },
-    credentials: true, // ★ 쿠키 허용
-  })
-);
+const corsOptions = {
+  origin(origin, cb) {
+    // 개발 중 curl/Postman 등 Origin 없는 요청 허용
+    if (!origin) return cb(null, true);
+    if (allowedOrigins.includes(origin)) return cb(null, true);
+    return cb(new Error("Not allowed by CORS: " + origin), false);
+  },
+  credentials: true, // 쿠키/인증정보 허용
+  methods: ["GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"], // ✅ DELETE 포함
+  allowedHeaders: ["Content-Type", "Authorization"],             // ✅ Bearer 토큰 허용
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
 
-// 세션 디렉토리: 환경변수 우선, 없으면 기본값 사용
+app.use(cors(corsOptions));
+// ✅ Express 5에서는 "*" 와일드카드 문자열이 오류 → 정규식으로 전체 경로 매칭
+app.options(/.*/, cors(corsOptions));
+
+/* ====== 세션 디렉토리 ====== */
 const sessionsDir = process.env.SESSION_DIR
   ? process.env.SESSION_DIR
   : path.resolve(__dirname, "../.sessions");
