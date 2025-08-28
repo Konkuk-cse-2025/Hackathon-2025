@@ -66,7 +66,7 @@ export default function SecretBox({
             <img src="icons/x.svg" alt="닫기" className={styles.closeIcon} />
           </button>
         </div>
-        <div className={styles.sub}>created by. {ownerName}</div>
+      
       </div>
 
       <div className={styles.inlineRow}>

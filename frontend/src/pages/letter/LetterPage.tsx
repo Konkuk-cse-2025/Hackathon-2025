@@ -68,7 +68,12 @@ export default function LetterPage() {
   );
   return (
     <>
-      <Header title="편지함 제목" />
+      <Header
+        mode="imageOnly"
+        imageSrc="/icons/Logo_write.png"
+        alt="편지함"
+        imageWidth={80}
+      />
       <div className={styles.page}>
         <div className={styles.title}>
           <img src="/icons/mail_fill.svg" />

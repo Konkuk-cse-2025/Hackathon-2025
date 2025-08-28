@@ -33,9 +33,9 @@ export default function LetterPaper({
       <section className={styles.paperCard}>
         <div className={styles.paper} aria-label="편지 내용">
           <div className={styles.paperInner}>
-            <span className={styles.toLabel}>{to || "To."}</span>
+            <span className={styles.toLabel}>To. {to || "To."}</span>
             <div className={styles.body}>{body}</div>
-            <span className={styles.fromLabel}>{from || "From."}</span>
+            <span className={styles.fromLabel}>From. {from || "From."}</span>
           </div>
         </div>
         <div className={styles.bookmark}>
