@@ -1,0 +1,30 @@
+# Node modules
+backend/node_modules/
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+backend/.env
+
+# SQLite database (Prisma dev.db)
+backend/prisma/dev.db
+
+# Build outputs
+dist/
+build/
+
+# Temporary files
+.DS_Store
+
+# Railway / Vercel / etc.
+.vercel
+.railway
+
+# Don't ignore backend package files
+!backend/package.json
+!backend/package-lock.json
