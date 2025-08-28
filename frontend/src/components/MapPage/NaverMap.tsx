@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import LetterboxMarker from "./markers/LetterboxMarker";
 import type { Letterbox } from "./types";
+import styles from "./NaverMap.module.css";
 
 type Props = {
   letterboxes: Letterbox[];
@@ -164,17 +165,19 @@ const NaverMap: React.FC<Props> = ({ letterboxes, selectedId, onSelect }) => {
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <div style={{ padding: 8, display: "flex", gap: 8 }}>
-        <button onClick={() => setFollow((v) => !v)}>
-          {follow ? "따라가기 끄기" : "따라가기 켜기"}
+      <div className={styles.overlay}>
+        <button onClick={() => setFollow((v) => !v)}
+          className={styles.iconBtn1}>
+          {follow ? <img src="icons/follow_off.png" alt="닫기" className={styles.icon1}/> : <img src="icons/follow_on.png" alt="닫기" className={styles.icon1} />}
         </button>
         <button
           onClick={() => {
             const pos = meMarkerRef.current?.getPosition?.();
             if (pos && mapRef.current) mapRef.current.panTo(pos);
           }}
+          className={styles.iconBtn}
         >
-          내 위치로 이동
+          <img src="icons/myfind.png" alt="닫기" className={styles.icon} />
         </button>
       </div>
       <div
