@@ -14,8 +14,6 @@ if (
   require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 }
 
-
-
 const app = express();
 app.set("trust proxy", 1); // 프록시 뒤 HTTPS일 때 secure 쿠키 지원
 
@@ -25,7 +23,7 @@ const prisma = new PrismaClient();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-  "http://localhost:4173",       // vite preview
+  "http://localhost:4173", // vite preview
   "http://127.0.0.1:4173",
   "https://konkuk-hackathon-2025-qu2t.vercel.app", // 배포 프론트
   process.env.FRONT_ORIGIN,
@@ -56,8 +54,6 @@ try {
   console.error("❌ 세션 디렉토리 생성 실패:", e);
 }
 
-
-
 /* ====== 세션 미들웨어 ====== */
 app.use(
   session({
@@ -66,9 +62,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: new SQLiteStore({
-    dir: sessionsDir,
-    db: process.env.SESSION_DB || "sessions.sqlite",
-}),
+      dir: sessionsDir,
+      db: process.env.SESSION_DB || "sessions.sqlite",
+    }),
     cookie: {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
