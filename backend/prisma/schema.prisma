@@ -13,7 +13,6 @@ enum MailboxType {
 }
 
 model User {
-
   id        String   @id @default(cuid())
   loginId   String   @unique
   password  String
@@ -45,23 +44,24 @@ model Mailbox {
 }
 
 model Letter {
-
   id Int @id @default(autoincrement())
 
-  
   mailboxId Int
-  authorId  String?
+  authorId  String
 
   title     String
   content   String
+  to        String?
+  from      String?
   savedBy   SavedLetter[]
   createdAt DateTime      @default(now())
 
   // 관계
   mailbox Mailbox @relation(fields: [mailboxId], references: [id], onDelete: Cascade)
-  author  User?   @relation(fields: [authorId], references: [id])
+  author  User    @relation(fields: [authorId], references: [id])
 
   @@index([mailboxId, createdAt])
+  @@index([authorId, createdAt])
 }
 
 model SavedLetter {

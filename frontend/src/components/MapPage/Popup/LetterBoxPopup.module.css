@@ -5,9 +5,7 @@
   background: #fff7ee; /* 프로젝트 톤에 맞게 */
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
-.secret {
-  /* 비밀 팝업 톤 분리 */
-}
+
 
 .header {
   position: relative;
@@ -18,7 +16,7 @@
 .close {
   position: absolute;
   right: -20px;
-  bottom: 18px;
+  bottom: 60px;
   border: none;
   background: transparent;
   -webkit-tap-highlight-color: transparent;
@@ -67,7 +65,11 @@
   position: relative;
   bottom: 17px;
 }
-
+.icon{
+  width: 80px;
+  height: 90px;
+  margin-left: 125px;
+}
 .statusIdle {
   min-height: 18px;
 }
@@ -89,3 +91,9 @@
 .lock {
   margin-right: 6px;
 }
+
+/* 공통 여백 */
+.hintBlock { margin-top: 12px; }
+.statusMsg { margin-top: 12px; min-height: 18px; } /* 메시지가 생겨도 점프 최소화 */
+.actionsRow { margin-top: 12px; } /* 상태 → 버튼 간격 */
+.hintText { font-size: 12px; line-height: 16px; color: #8a6851; }

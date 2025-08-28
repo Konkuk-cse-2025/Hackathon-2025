@@ -118,6 +118,8 @@ export default function LetterDetailPage() {
     try {
       if (nextSavedState) {
         await bookmarkLetter(lid);
+      } else {
+        await unbookmarkLetter(lid);
       }
     } catch (e) {
       console.error("toggle failed", e);

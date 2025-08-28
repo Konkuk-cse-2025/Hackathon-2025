@@ -8,6 +8,7 @@ const mapServerToUi = (it: ServerLetterbox): UiLetterbox => ({
   lat: it.lat,
   lng: it.lng,
   isSecret: it.type === "SECRET",
+  hint: (it as any).hint ?? (it as any).passwordHint ?? "",
 });
 
 export async function fetchLetterboxes(params: {

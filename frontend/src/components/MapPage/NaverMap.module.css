@@ -1,0 +1,74 @@
+.page {
+    position: relative;      /* overlay의 기준 */
+    height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  /* 지도를 뒤로 깔기 */
+  .map {
+    position: absolute;
+    inset: 0;                /* top:0 right:0 bottom:0 left:0 */
+    z-index: 0;
+  }
+  
+  /* 지도 위 컨트롤 바 */
+  .overlay {
+    position: absolute;
+    top: 12px;               /* 필요하면 safe-area 고려해서 calc(env(safe-area-inset-top) + 12px) */
+    left: 12px;
+    right: 12px;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+  
+    /* 드래그/줌은 지도에 전달하고, 버튼만 클릭되게 */
+    pointer-events: none;
+  }
+  
+  .overlay > * {
+    pointer-events: auto;    /* 자식(버튼)은 클릭 가능 */
+  }
+  
+  /* 버튼 예시 스타일 */
+  .title {
+    background: #6B4226;
+    color: #fff;
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .iconBtn {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 999px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    cursor: pointer;
+  }
+  .iconBtn1 {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    cursor: pointer;
+  }
+ 
+  
+  .icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+  }
+  .icon1 {
+    width: 30px;
+    height: 30px;
+    display: block;
+  }
+  

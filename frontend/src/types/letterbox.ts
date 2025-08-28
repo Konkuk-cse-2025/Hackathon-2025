@@ -17,4 +17,5 @@ export type UiLetterbox = {
   lat: number;
   lng: number;
   isSecret: boolean;
+  hint? : string;
 };
