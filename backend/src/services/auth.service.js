@@ -18,6 +18,8 @@ async function signup({ loginId, name, password }) {
     name,
     hasPassword: typeof password === "string",
   });
+
+  // 기본 검증
   if (
     !loginId ||
     !name ||
@@ -29,20 +31,31 @@ async function signup({ loginId, name, password }) {
     throw e;
   }
 
-  const taken = await userRepo.isIdTaken(loginId);
-  if (taken) {
-    const e = new Error("이미 사용 중인 아이디입니다.");
+  // ✅ 비밀번호 규칙: 8자 이상 & 영문 최소 1개 & 숫자 최소 1개
+  const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  if (!pwRegex.test(password)) {
+    const e = new Error("비밀번호는 8자 이상이며, 영문과 숫자를 최소 1개 이상 포함해야 합니다.");
     e.status = 400;
     throw e;
   }
 
-  // ✅ 서비스 레이어에서 해시 처리
+  // 아이디 중복 확인
+  const taken = await userRepo.isIdTaken(loginId);
+  if (taken) {
+    const e = new Error("이미 사용 중인 아이디입니다.");
+    e.status = 409; // Conflict가 의미상 더 적절
+    throw e;
+  }
+
+  // 비밀번호 해시
   const hash = await bcrypt.hash(password, 10);
 
-  // repo.create는 "넘겨준 그대로 저장"만 하도록 가정
+  // 저장 (repo.create는 전달값 그대로 저장한다고 가정)
   const user = await userRepo.create({ loginId, name, password: hash });
 
-  const token = signToken(user.loginId);
+  // ✅ 토큰 sub에는 user의 고유 식별자(id) 사용
+  const token = signToken(user.id);
+
   return { token, user };
 }
 
