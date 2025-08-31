@@ -1,19 +1,56 @@
-# Hackathon-2025
-Konkuk CSE 2025 해커톤 준비 및 프로젝트 저장소
+# LetterUs - Hackathon 2025
 
-2025년 8월 개최 예정인 **건국대학교 컴퓨터공학부 해커톤** 대비 팀 프로젝트 레포지토리입니다.  
-프론트엔드와 백엔드 개발, 디자인, 배포 등 전 과정을 한 저장소에서 관리합니다.
+📌 **건국대학교 2025 컴퓨터공학부 해커톤 최우수상 수상작** 
 
-## 📅 대회 일정
-- 개최일: 2025년 8월 28일 ~ 29일
-- 목적: 해커톤 기간 내 MVP(최소기능제품) 완성 및 시연
+아날로그 감성으로 **추억, 사람, 여유를 다시 이어주는 지도 기반 편지함 서비스**입니다.  
+사용자는 원하는 장소에 직접 가서 편지함을 만들고, 직접 방문해야만 편지를 작성하거나 열람할 수 있습니다.  
 
-## 👥 팀 역할 분배
+## 🚀 서비스 소개
+- 장소에 얽힌 추억을 사람들과 나눌 수 있는 플랫폼  
+- 편지함은 직접 방문해야만 생성/작성/열람 가능  
+- **쉽게 메시지가 전달되는 사회 속에서 잊힌 ‘기다림과 설렘의 가치’**를 되살리고자 했습니다.
+-  배포 링크 : https://konkuk-hackathon-2025-qu2t.vercel.app
+- 시연 영상 : https://drive.google.com/file/d/1-hOgzWM4Egt2qjyu8tHkxfEhXrVvpGrv/view?usp=sharing
+<img width="2543" height="140" alt="image" src="https://github.com/user-attachments/assets/273234d9-80d0-485f-afec-d7136e630cd4" />
 
-| 역할 | 담당자 | 주요 업무 |
-|------|--------|----------|
-| **팀장 · 프론트엔드·디자인** | 이정언 | 아이디어 결정, 일정·역할 조율, UI 설계, 메인 페이지 구현 |
-| **프론트엔드** | 조은서 | 페이지 구현, 스타일링, API 연동 |
-| **백엔드** | 노유정 | API·DB 설계 및 구현, 서버 로직 개발 |
-| **배포·인프라** | 장윤지 | 프론트/백 배포, 환경 세팅·관리, API 명세서 관리, 일정 체크 |
- ## 아무거나
+## ✨ 주요 기능
+- **지도 기반 편지함**
+  - 네이버 지도 기반 실시간 위치 확인
+  - 반경 100m 이내 직접 방문해야만 편지 열람 가능
+  - 오픈 편지함 / 비밀 편지함 선택 가능  
+- **편지 쓰기·읽기**
+  - 추억과 감정을 담은 편지를 직접 작성/열람
+  - 내가 쓴 편지 및 저장한 편지 확인 가능  
+- **회원 정보 관리**
+  - 회원가입/로그인
+  - 마이페이지에서 개인 편지함 기록 관리   
+
+## 🛠 기술 스택
+- **Frontend**: React, Vite, Naver Map API  
+- **Backend**: Node.js, Express, Prisma  
+- **Database**: SQLite  
+- **Infra**: Vercel (프론트), Railway (백엔드)  
+- **Collaboration**: GitHub, Notion  
+
+## 📷 시연 이미지
+<img width="1219" height="683" alt="image" src="https://github.com/user-attachments/assets/8f7afd54-3552-49ef-a087-a60ec8005893" />
+<img width="1225" height="682" alt="image" src="https://github.com/user-attachments/assets/1cc543fb-d5f2-4760-9008-9f0fb500a253" />
+<img width="1221" height="695" alt="image" src="https://github.com/user-attachments/assets/401ec73c-82c2-48a3-ba8b-c71937051a76" />
+
+## ⚙️ 실행 방법
+```bash
+# Clone repository
+git clone https://github.com/Konkuk-cse-2025/LetterUs.git
+
+# Frontend 실행
+cd frontend
+npm install
+npm run dev
+
+# Backend 실행
+cd backend
+npm install
+npm run dev
+
+
+
