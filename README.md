@@ -32,10 +32,9 @@
 - **Collaboration**: GitHub, Notion  
 
 ## 📷 시연 이미지
-<img width="631" height="1246" alt="image" src="https://github.com/user-attachments/assets/3be9fbfc-1767-4264-beb3-8f167531eb34" />
-<img width="680" height="1358" alt="image" src="https://github.com/user-attachments/assets/a1fd4b92-d55f-4154-a3db-efe49b9b78e2" />
-<img width="846" height="1519" alt="image" src="https://github.com/user-attachments/assets/9cae8555-09b2-4a00-aa52-ba74b125412c" />
-<img width="767" height="1471" alt="image" src="https://github.com/user-attachments/assets/96c78223-2e26-4bdd-b6ce-105dfdf28fa4" />
+<img width="878" height="568" alt="image" src="https://github.com/user-attachments/assets/c88192a2-b00b-4c94-8f8c-84a608c5f4ea" />
+<img width="856" height="557" alt="image" src="https://github.com/user-attachments/assets/ba43ee25-9586-40e3-8530-f262b222c669" />
+
 
 
 ## ⚙️ 실행 방법
