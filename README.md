@@ -11,7 +11,6 @@
 - **쉽게 메시지가 전달되는 사회 속에서 잊힌 ‘기다림과 설렘의 가치’**를 되살리고자 했습니다.
 -  배포 링크 : https://konkuk-hackathon-2025-qu2t.vercel.app
 - 시연 영상 : https://drive.google.com/file/d/1-hOgzWM4Egt2qjyu8tHkxfEhXrVvpGrv/view?usp=sharing
-<img width="2543" height="140" alt="image" src="https://github.com/user-attachments/assets/273234d9-80d0-485f-afec-d7136e630cd4" />
 
 ## ✨ 주요 기능
 - **지도 기반 편지함**
@@ -33,9 +32,11 @@
 - **Collaboration**: GitHub, Notion  
 
 ## 📷 시연 이미지
-<img width="1219" height="683" alt="image" src="https://github.com/user-attachments/assets/8f7afd54-3552-49ef-a087-a60ec8005893" />
-<img width="1225" height="682" alt="image" src="https://github.com/user-attachments/assets/1cc543fb-d5f2-4760-9008-9f0fb500a253" />
-<img width="1221" height="695" alt="image" src="https://github.com/user-attachments/assets/401ec73c-82c2-48a3-ba8b-c71937051a76" />
+<img width="631" height="1246" alt="image" src="https://github.com/user-attachments/assets/3be9fbfc-1767-4264-beb3-8f167531eb34" />
+<img width="680" height="1358" alt="image" src="https://github.com/user-attachments/assets/a1fd4b92-d55f-4154-a3db-efe49b9b78e2" />
+<img width="846" height="1519" alt="image" src="https://github.com/user-attachments/assets/9cae8555-09b2-4a00-aa52-ba74b125412c" />
+<img width="767" height="1471" alt="image" src="https://github.com/user-attachments/assets/96c78223-2e26-4bdd-b6ce-105dfdf28fa4" />
+
 
 ## ⚙️ 실행 방법
 ```bash
